@@ -9,6 +9,7 @@ package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.UsuarioFacade;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -58,9 +59,10 @@ public class MbLogin implements Serializable{
     }
 /**
      * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     * @throws java.io.IOException
      */
-    public void iniciar(){
-        if(!iniciado){
+    public void iniciar() throws IOException{
+        if(iniciado){
             String s;
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
             .getExternalContext().getSession(true);
@@ -72,6 +74,15 @@ public class MbLogin implements Serializable{
                         session.removeAttribute(s);
                     }
                 }
+            }
+        }else{
+            if(usuarioFacade.getUsuario(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser()) != null){
+                usLogeado = usuarioFacade.getUsuario(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
+                ambito = usLogeado.getRol().getNombre();
+                iniciado = true;
+            }else{
+                FacesContext fc=FacesContext.getCurrentInstance();
+                fc.getExternalContext().redirect(ResourceBundle.getBundle("/Bundle").getString("logError"));
             }
         }
     }      
@@ -147,59 +158,10 @@ public class MbLogin implements Serializable{
         this.ambito = rol;
     }
     
-    public void login(ActionEvent actionEvent){
-        RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage msg = null;
-
-        if (nombre != null && clave != null){
-            // valido las credenciales recibidas
-            if(validarInt()){
-                logeado = true;
-                
-                //harcodeo los datos del usuario, por ahora Ceci
-                usLogeado = new Usuario();
-                usLogeado.setNombre("carmendariz");
-                usLogeado.setId(Long.valueOf(5));
-
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", usLogeado.getNombre());
-            }else{
-                logeado = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error de inicio de sesión", "Usuario y/o contraseña invalidos");
-            }
-        }
-        
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        context.addCallbackParam("estaLogeado", logeado);
-        clave = "";
-        
-        if (logeado){
-            context.addCallbackParam("view", ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion"));
-        }
-    }
-    
-     /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbLogin");
-   
-        return "inicio";
-    }      
-    
-    
-    
     public void logout(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.invalidate();
         logeado = false;
     }  
-    
-    private boolean validarInt(){
-        return "admin".equals(nombre) && "admin".equals(clave);
-    }
-
 }
 

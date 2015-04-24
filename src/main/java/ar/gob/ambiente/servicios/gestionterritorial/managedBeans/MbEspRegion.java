@@ -25,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -42,8 +41,6 @@ public class MbEspRegion implements Serializable{
     
     @EJB
     private EspecificidadDeRegionFacade espDeRegionFacade;
-    private int selectedItemIndex;
-    private String selectParam;    
     private boolean iniciado;
     private int update; // 0=updateNormal | 1=deshabiliar | 2=habilitar 
     private MbLogin login;
@@ -139,17 +136,6 @@ public class MbEspRegion implements Serializable{
     public String prepareList() {
         recreateModel();
         return "list";
-    }
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/espRegion/list";
-        }
-        recreateModel();
-        return redirect;
     }
 
     /**
@@ -249,9 +235,6 @@ public class MbEspRegion implements Serializable{
    
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }
 
  
@@ -319,19 +302,6 @@ public class MbEspRegion implements Serializable{
     /**************************
     **    Métodos de selección     **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(espDeRegionFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(espDeRegionFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -349,51 +319,6 @@ public class MbEspRegion implements Serializable{
      */
     private EspecificidadDeRegionFacade getFacade() {
         return espDeRegionFacade;
-    }
-
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-
- 
-    /**
-     * Opera el borrado de la entidad
-     */
-    private void performDestroy() {
-        try {
-            //getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EspecificidadDeRegionDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EspecificidadDeRegionDeletedErrorOccured"));
-        }
-    }
-    
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            /*
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-            */
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
     }
     
     
