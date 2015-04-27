@@ -9,24 +9,20 @@
         <title>#{bundle.EspRegionTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.EspRegionTitle}" />
-        </ui:define>
         <ui:define name="content">
         <br/> 
          <h:form>
                 <p:panel id="espRegionForm" header="#{bundle.EspRegionListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEspRegion.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbEspRegion.prepareList}" update="espRegionList"/>
-                        <p:commandButton icon="ui-icon-home" value="Inicio" action="#{mbEspRegion.cleanUp()}"/>                        
+                        <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbEspRegion.prepareList}" update="espRegionList"/>                      
                     </h:panelGrid>   
                 </p:panel>
                 <br/>           
                 <p:dataTable value="#{mbEspRegion.items}" 
                              var="e" 
                              id="espRegionList" 
-                             rows="5"
+                             rows="5" filteredValue="#{mbEspRegion.listFilter}"
                              paginator="true"  
                              widgetVar="espTable"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -41,7 +37,7 @@
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>                               
 
-                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" footerText="" filterMatchMode="equals">
+                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" filterMatchMode="equals">
                         <f:facet name="filter">
                             <p:selectOneMenu onchange="PF('espTable').filter()" style="font-size: 80%">
                                 <f:converter converterId="javax.faces.Boolean" />
@@ -53,7 +49,7 @@
                         <h:outputText value="#{e.adminentidad.habilitado ? 'Habilitado': 'Deshabilitado'}" />
                     </p:column>
                     
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:140px">
                         <p:growl id="messages" showDetail="true" />    
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbEspRegion.prepareView}" title="Ver Detalle">
                                 <f:setPropertyActionListener value="#{e}" target="#{mbEspRegion.current}" />
@@ -62,20 +58,14 @@
                                 <f:setPropertyActionListener value="#{e}" target="#{mbEspRegion.current}" />
                          </p:commandButton>
 
-                        <p:commandButton icon="ui-icon-close" 
-                                         action="#{mbEspRegion.deshabilitar}" 
-                                         rendered="#{e.adminentidad.habilitado == 'true'}" 
-                                         title="Deshabilitar"
-                                         update="espRegionList">
+                        <p:commandButton icon="ui-icon-close" action="#{mbEspRegion.deshabilitar}" rendered="#{e.adminentidad.habilitado == 'true'}" 
+                                         title="Deshabilitar" update="espRegionList">
                                 <f:setPropertyActionListener value="#{e}" target="#{mbEspRegion.current}" />
                                 <p:confirm header="Confirmar"  message="¿Desea deshabilitar la Especificidad?" icon="ui-icon-alert" />
                         </p:commandButton>                
 
-                        <p:commandButton icon="ui-icon-check" 
-                                         action="#{mbEspRegion.habilitar}" 
-                                         rendered="#{e.adminentidad.habilitado == 'false'}" 
-                                         title="Habilitar"
-                                         update="espRegionList">
+                        <p:commandButton icon="ui-icon-check" action="#{mbEspRegion.habilitar}" rendered="#{e.adminentidad.habilitado == 'false'}" 
+                                         title="Habilitar" update="espRegionList">
                                 <f:setPropertyActionListener value="#{e}" target="#{mbEspRegion.current}" />
                                 <p:confirm header="Confirmar" message="¿Desea habilitar la Especificidad?" icon="ui-icon-alert" />
                             </p:commandButton>  

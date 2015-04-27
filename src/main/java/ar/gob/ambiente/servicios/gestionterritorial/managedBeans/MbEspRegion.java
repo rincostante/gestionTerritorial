@@ -14,6 +14,7 @@ import ar.gob.ambiente.servicios.gestionterritorial.facades.EspecificidadDeRegio
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -37,6 +38,7 @@ public class MbEspRegion implements Serializable{
     
     private EspecificidadDeRegion current;
     private DataModel items = null;
+    private List<EspecificidadDeRegion> listFilter;
 
     
     @EJB
@@ -66,6 +68,15 @@ public class MbEspRegion implements Serializable{
      ** Getters y Setters ***********
      ********************************/     
     
+    public List<EspecificidadDeRegion> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<EspecificidadDeRegion> listFilter) {
+        this.listFilter = listFilter;
+    }
+     
+    
     public EspecificidadDeRegion getCurrent() {
         return current;
     }
@@ -80,7 +91,6 @@ public class MbEspRegion implements Serializable{
     public EspecificidadDeRegion getSelected() {
         if (current == null) {
             current = new EspecificidadDeRegion();
-           // selectedItemIndex = -1;
         }
         return current;
     }   
@@ -91,22 +101,11 @@ public class MbEspRegion implements Serializable{
    
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
     }
-   /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbEspRegion");
-   
-        return "inicio";
-    }       
+    
     /**
      * Método que borra de la memoria los MB innecesarios al cargar el listado 
      */
