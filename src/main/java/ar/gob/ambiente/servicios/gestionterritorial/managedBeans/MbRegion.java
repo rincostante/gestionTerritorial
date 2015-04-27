@@ -26,13 +26,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -44,7 +42,6 @@ import org.primefaces.context.RequestContext;
 public class MbRegion implements Serializable{
 
     private Region current;
-//    private DataModel items = null;
     private List<Provincia> provVinc;
     private List<Provincia> provVincFilter;
     private List<Provincia> provDisp;
@@ -68,8 +65,7 @@ public class MbRegion implements Serializable{
     private Region regionSelected;
     private Usuario usLogeado;
     private List<EspecificidadDeRegion> listaEspecificidadDeRegion;   
-    private MbLogin login;
-    private int tipoList; //1= habilitadas | 2=deshabilitada    
+    private MbLogin login;   
     private boolean iniciado;
     //private int update; // 0=updateNormal | 1=deshabiliar | 2=habilitar
 
@@ -85,7 +81,6 @@ public class MbRegion implements Serializable{
     @PostConstruct
     public void init(){
         iniciado = false;
-        tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
@@ -121,11 +116,7 @@ public class MbRegion implements Serializable{
 
     public List<Region> getListRegion() {
         if(listRegion == null){
-            switch(tipoList){
-                case 1: listRegion = getFacade().getHabilitadas();
-                    break;
-                case 2: listRegion =getFacade().getDeshabilitadas();
-            }
+            listRegion = getFacade().getHabilitadas();
         }
         return listRegion;
     }
@@ -197,14 +188,6 @@ public class MbRegion implements Serializable{
     public void setUsLogeado(Usuario usLogeado) {
         this.usLogeado = usLogeado;
     }
-
-    public int getTipoList() {
-        return tipoList;
-    }
-
-    public void setTipoList(int tipoList) {
-        this.tipoList = tipoList;
-    }
     
  
     /********************************
@@ -231,7 +214,6 @@ public class MbRegion implements Serializable{
     public String prepareList() {
         iniciado = true;
         asignaProvincia = false;
-        tipoList = 1;
         recreateModel();
         if(provVinc != null){
             provVinc.clear();
@@ -247,7 +229,6 @@ public class MbRegion implements Serializable{
      * @return 
      */
     public String prepareListaDes() {
-        tipoList = 2;
         recreateModel();
         asignaProvincia = false;
         if(provVinc != null){
@@ -375,7 +356,7 @@ public class MbRegion implements Serializable{
             return null;
         }else{
             try {
-                if(getFacade().noExiste(current.getNombre())){
+                if(getFacade().noExiste(current.getNombre(), current.getEspecificidadderegion())){
                     // Creación de la entidad de administración y asignación
                     Date date = new Date(System.currentTimeMillis());
                     AdminEntidad admEnt = new AdminEntidad();
@@ -410,9 +391,8 @@ public class MbRegion implements Serializable{
     public String update() {    
         boolean edito;
         Region sub;
-        String retorno = "";
         try {
-            sub = getFacade().getExistente(current.getNombre());
+            sub = getFacade().getExistente(current.getNombre(), current.getEspecificidadderegion());
             if(sub == null){
                 edito = true;  
             }else{
@@ -429,14 +409,8 @@ public class MbRegion implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("RegionUpdated"));
                 asignaProvincia = false;
                 provDisp.clear();
-                listaEspecificidadDeRegion.clear();
-                if(tipoList == 1){
-                    retorno = "view";  
-                }
-                if(tipoList == 2){
-                    retorno = "viewDes";  
-                }     
-                return retorno;
+                listaEspecificidadDeRegion.clear(); 
+                return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("RegionExistente"));
                 return null; 
@@ -489,22 +463,8 @@ public class MbRegion implements Serializable{
         provincias = current.getProvincias();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
+        RequestContext.getCurrentInstance().openDialog("", options, null);
     }       
-    /**
-     * Método para manipular las provincias de una región
-     */
-    public void verProvinciasVinc(){
-        Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgProvVinc", options, null);
-    }
-    
-    public void verProvinciasDisp(){
-        Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgProvDisp", options, null);
-    }
 
     public void asignarProvincia(Provincia prov){
         provVinc.add(prov);
@@ -515,7 +475,6 @@ public class MbRegion implements Serializable{
         if(provDispFilter != null){
             provDispFilter = null;
         }
-        RequestContext.getCurrentInstance().closeDialog("dlgProvDisp");
     }
     
     public void quitarProvincia(Provincia prov){
@@ -527,12 +486,6 @@ public class MbRegion implements Serializable{
         if(provDispFilter != null){
             provDispFilter = null;
         }
-        RequestContext.getCurrentInstance().closeDialog("dlgProvVinc");
-    }
-    
-    public void limpiarProvincia(){
-        provVinc = current.getProvincias();
-        provDisp = cargarProvinciasDisponibles();
     }
     
     /**

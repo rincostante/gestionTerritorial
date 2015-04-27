@@ -37,7 +37,7 @@
                 <p:panel id="pnProvincias" 
                          header="Seleccione las provincias para esta Región" 
                          toggleable="true" toggleTitle="Ver/Ocultar"
-                         style="width:800px;">
+                         style="width:400px;">
                     <p:dataTable value="#{mbRegion.provincias}" var="e" id="provList" rows="5" 
                                  filteredValue="#{mbRegion.provinciasFilter}"
                                  rowKey="#{e.id}"
@@ -47,12 +47,9 @@
                                  rowsPerPageTemplate="5,10,15" style="font-size: 80%">
                         <f:facet name="header">
                             Listado de #{bundle.ProvinciasAsociadas}
-                            <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                            <p:commandButton icon="ui-icon-refresh" value="Listar" 
-                                             update="provList" style="margin-left: 10px"/>
-                            <p:columnToggler datasource="provList" trigger="toggler" />
+                            <p:commandButton icon="ui-icon-refresh" value="Listar" update="provList" style="margin-left: 10px"/>
                         </f:facet>
-                        <p:column selectionMode="multiple" style="width: 20px"  />  
+                        <p:column selectionMode="multiple" style="width: 35px"  />  
                         
                         <p:column headerText="#{bundle.CreateProvinciaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                             <p:outputLabel value="#{e.nombre}"/>

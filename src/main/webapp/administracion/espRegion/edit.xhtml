@@ -20,7 +20,8 @@
                 <p:toolbar>
                     <f:facet name="left">
                         <p:commandButton icon="ui-icon-pencil" action="#{mbEspRegion.update}" value="Guardar" style="margin-right:10px;" update="pnEdit"/>
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right"><p:ajax update="pnEdit" resetValues="true" />
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
                         </p:commandButton>
                     </f:facet>
                     <f:facet name="right">

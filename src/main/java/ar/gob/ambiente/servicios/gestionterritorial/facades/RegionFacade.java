@@ -7,12 +7,14 @@
 package ar.gob.ambiente.servicios.gestionterritorial.facades;
 
 
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.EspecificidadDeRegion;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Region;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -50,28 +52,33 @@ public class RegionFacade extends AbstractFacade<Region> {
     /**
      * Método para validad que no exista una Actividad Planificada con este nombre ya ingresado
      * @param nombre
+     * @param espReg
      * @return 
      */
-    public boolean noExiste(String nombre){
+    public boolean noExiste(String nombre, EspecificidadDeRegion espReg){
         em = getEntityManager();
         String queryString = "SELECT reg FROM Region reg "
-                + "WHERE reg.nombre = :nombre";
+                + "WHERE reg.nombre = :nombre "
+                + "AND reg.especificidadderegion = :espReg";
         Query q = em.createQuery(queryString)
-                .setParameter("nombre", nombre);
+                .setParameter("nombre", nombre)
+                .setParameter("espReg", espReg);
         return q.getResultList().isEmpty();
     }    
     /**
      * Método que obtiene una Region existente según los datos recibidos como parámetro
      * @param nombre
+     * @param espReg
      * @return 
      */
-    public Region getExistente(String nombre){
+    public Region getExistente(String nombre, EspecificidadDeRegion espReg){
         List<Region> lProv;
-        em = getEntityManager();
         String queryString = "SELECT reg FROM Region reg "
-                + "WHERE reg.nombre = :nombre";
+                + "WHERE reg.nombre = :nombre "
+                + "AND reg.especificidadderegion = :espReg";
         Query q = em.createQuery(queryString)
-                .setParameter("nombre", nombre);
+                .setParameter("nombre", nombre)
+                .setParameter("espReg", espReg);
         lProv = q.getResultList();
         if(!lProv.isEmpty()){
             return lProv.get(0);

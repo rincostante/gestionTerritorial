@@ -6,16 +6,14 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
      <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-     <ui:define name="title">
-            <h:outputText value="#{bundle.RegionTitle}" />
-     </ui:define>
      <ui:define name="content">
-     <br/>
      <h:form style="text-align: left">
                 <p:panel id="pnEdit" header="#{bundle.RegionEditTitle}" style="margin-bottom:10px;">
                     <h:inputHidden id="id" value="#{mbRegion.selected.id}" />
                     <p:messages id="messages" />
+                    
                     <p:dialog id="dlg" resizable="false" />
+                    
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.RegionTitle}" for="nombre"/>
                         <p:inputText id="nombre" style="width: 500px"
@@ -34,56 +32,74 @@
                         </p:selectOneMenu> 
                         
                         <h:outputLabel   value="#{bundle.ProvinciasAsociadas}" />
-                        <p:panelGrid id="btnVerProv" columns="2">                       
+                        <h:panelGrid id="btnVerProv" columns="2">                       
                             <p:commandButton value="Ver/Quitar Asignados" 
-                                         icon="ui-icon-extlink" 
-                                         type="button" 
-                                         onclick="PF('ProvVinc').show();" 
-                                         actionListener="#{mbRegion.verProvincias}" /> 
+                                         icon="ui-icon-extlink"
+                                         onclick="PF('ProvVinc').show();"  /> 
                             <p:commandButton value="Ver/Agregar Disponibles" 
                                          icon="ui-icon-extlink" 
                                          type="button" 
                                          onclick="PF('ProvDisp').show();" 
                                          actionListener="#{mbRegion.provDisp}" />      
 
-                        </p:panelGrid> 
+                        </h:panelGrid> 
                     </h:panelGrid>
+                    
                         <p:dialog style="font-size: 80%"
                                   header="Listado de provincias asociadas"
                                   widgetVar="ProvVinc"
-                                  showEffect="explode"
-                                  hideEffect="bounce"
-                                  height="100"
-                                  width="30%">
-                            <p:dataTable value="#{mbRegion.provVinc}" 
-                                         var="e" 
-                                         id="provVinc" >
-                                <p:column headerText="Provincia" 
-                                          filterMatchMode="contains"
-                                          filterBy="#{e.nombre}"
-                                          sortBy="#{e.nombre}"
-                                          rendered="#{e.adminentidad.habilitado == 'true'}" >
-                                    <p:outputLabel value="#{e.nombre}"/> 
+                                  showEffect="fade"
+                                  hideEffect="fade"
+                                  height="200"
+                                  width="50%">
+                            <p:dataTable value="#{mbRegion.provVinc}" filteredValue="#{mbRegion.provVincFilter}"
+                                            rows="5" 
+                                            paginator="true" 
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                            rowsPerPageTemplate="5,10,15"
+                                            var="e" 
+                                            id="provVinc" >
+                                <f:facet name="header">
+                                    <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="provVinc" style="margin-left: 10px"/>
+                                </f:facet>
+                                
+                                <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{e.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Quitar" style="width :70px;" >
+                                    <p:commandButton icon="ui-icon-circle-triangle-n" actionListener="#{mbRegion.quitarProvincia(e)}" update="provVinc" />
                                 </p:column>                        
                             </p:dataTable>
                         </p:dialog>  
                     
+                    
+                    
+                    
                         <p:dialog style="font-size: 80%"
                                   header="Listado de provincias disponibles"
                                   widgetVar="ProvDisp"
-                                  showEffect="explode"
-                                  hideEffect="bounce"
-                                  height="100"
-                                  width="30%">
-                            <p:dataTable value="#{mbRegion.provDisp}" 
-                                         var="d" 
-                                         id="provDisp" >
-                                <p:column headerText="ProvinciaDisponible" 
-                                          filterMatchMode="contains"
-                                          filterBy="#{d.nombre}"
-                                          sortBy="#{d.nombre}"
-                                          rendered="#{d.adminentidad.habilitado == 'true'}" >
-                                    <p:outputLabel value="#{d.nombre}"/> 
+                                  showEffect="fade"
+                                  hideEffect="fade"
+                                  height="200"
+                                  width="50%">
+                            <p:dataTable value="#{mbRegion.provDisp}" filteredValue="#{mbRegion.provDispFilter}"
+                                            rows="5" 
+                                            paginator="true" 
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                            rowsPerPageTemplate="5,10,15"
+                                            var="e" 
+                                            id="provDisp" >
+                                <f:facet name="header">
+                                    <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="provDisp" style="margin-left: 10px"/>
+                                </f:facet>
+                                
+                                <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{e.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Asignar" style="width :70px;" >
+                                    <p:commandButton icon="ui-icon-circle-triangle-n" actionListener="#{mbRegion.asignarProvincia(e)}" update="provDisp" />
                                 </p:column>                        
                             </p:dataTable>
                         </p:dialog>   
@@ -91,17 +107,12 @@
 
                 </p:panel>
          
-         <p:toolbar>
+                <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-pencil" 
-                                         action="#{mbRegion.update}" 
-                                         value="Guardar" 
-                                         style="margin-right:10px;" 
-                                         update="pnEdit"/>
-                       
-                    </f:facet>
-                    <f:facet name="left">
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" update="pnEdit" resetValues="true" />                        
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbRegion.update}" value="Guardar" style="margin-right:10px;" update="pnEdit"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>    
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" action="#{mbRegion.prepareList}" value="Volver" style="float: next" immediate="true" ajax="false"/>
                     </f:facet>                    
                 </p:toolbar>
