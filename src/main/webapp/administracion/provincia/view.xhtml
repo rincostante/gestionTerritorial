@@ -10,7 +10,6 @@
         <h:outputText value="#{bundle.ProvinciaTitle}" />
         </ui:define>
         <ui:define name="content">
-        <br/>
         <h:form id="frmProvinciaView">
                 <p:panel id="pnView" header="#{bundle.ProvinciaViewTitle}" 
                     style="margin-bottom:10px;">
@@ -48,25 +47,35 @@
                                         rendered="#{not mbProvincia.selected.adminentidad.habilitado}"
                                         title="#{bundle.FechaBaja}"/>  
                         
-                        <h:outputLabel  value="#{bundle.DepartamentosAsociados}" />
+                        <h:outputLabel  value="#{bundle.DepartamentosAsociados}: " />
                         <p:commandButton value="Ver" type="button" onclick="PF('Departamentos').show();" actionListener="#{mbProvincia.selected.departamentos}" />      
-                        <h:outputLabel value="Regiones Asociadas" />
+                        <h:outputLabel value="Regiones Asociadas: " />
                         <p:commandButton value="Ver" type="button" onclick="PF('Regiones').show();" actionListener="#{mbProvincia.selected.regiones}" />                              
                  </h:panelGrid>    
                      <p:dialog style="font-size: 80%" header="Listado de Departamentos asociados"
-                                  widgetVar="Departamentos" showEffect="explode" hideEffect="bounce"
-                                  height="100" width="30%">     
+                                  widgetVar="Departamentos" showEffect="fade" hideEffect="fade"
+                                  height="200" width="30%">     
                         <p:dataTable value="#{mbProvincia.selected.departamentos}" var="e" id="departamentoList" >
-                            <p:column headerText="Especie" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" rendered="#{e.adminentidad.habilitado == 'true'}" >
+                            <f:facet name="header">
+                                <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="departamentoList" style="margin-left: 10px"/>
+                            </f:facet>
+                            <p:column headerText="Departamento" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" >
                                 <p:outputLabel value="#{e.nombre}"/> 
                             </p:column>                        
                         </p:dataTable>
                     </p:dialog>     
                     
                     <p:dialog style="font-size: 80%"
-                              header="Asociado a las Regiones:" widgetVar="Regiones" showEffect="explode" hideEffect="bounce" height="100" width="30%">
-                        <p:dataTable value="#{mbProvincia.selected.regiones}" var="reg" id="provinciaList" >
-                            <p:column headerText="Regiones" filterMatchMode="contains" filterBy="#{reg.nombre}" sortBy="#{reg.nombre}" rendered="#{reg.adminentidad.habilitado == 'true'}" >
+                              header="Asociado a las Regiones:" widgetVar="Regiones" showEffect="fade" hideEffect="fade" height="200" width="30%">
+                        <p:dataTable value="#{mbProvincia.selected.regiones}" var="reg" id="provinciaList" 
+                                    rows="5" 
+                                    paginator="true" 
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                    rowsPerPageTemplate="5,10,15" >
+                            <f:facet name="header">
+                                <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="provinciaList" style="margin-left: 10px"/>
+                            </f:facet>
+                            <p:column headerText="Regiones" filterMatchMode="contains" filterBy="#{reg.nombre}" sortBy="#{reg.nombre}" >
                                 <p:outputLabel value="#{reg.nombre}"/> 
                             </p:column>                        
                         </p:dataTable>

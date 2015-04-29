@@ -9,9 +9,6 @@
     <title>#{bundle.ProvinciaTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.ProvinciaTitle}" />
-        </ui:define>
         <ui:define name="content">
             <f:metadata>  
                 <f:event listener="#{mbProvincia.iniciar}" type="preRenderView"></f:event>  
@@ -22,11 +19,10 @@
                     <h:panelGrid columns="4">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbProvincia.prepareCreate}"/>
                         <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbProvincia.prepareList}" update="provinciaList"/>
-                        <p:commandButton icon="ui-icon-cancel" value="Inicio" action="#{mbProvincia.cleanUp}" />
                     </h:panelGrid>
                 </p:panel>
                 <br/>           
-                <p:dataTable value="#{mbProvincia.items}" var="e" id="provinciaList" rows="5"
+                <p:dataTable value="#{mbProvincia.items}" var="e" id="provinciaList" rows="5" filteredValue="#{mbProvincia.listFilter}"
                              paginator="true" widgetVar="provinciaTable"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -38,7 +34,7 @@
                     <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" >
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
-                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" footerText="" filterMatchMode="equals">
+                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" filterMatchMode="equals">
                         <f:facet name="filter">
                             <p:selectOneMenu onchange="PF('provinciaTable').filter()">
                                 <f:converter converterId="javax.faces.Boolean" />
@@ -49,7 +45,7 @@
                         </f:facet>
                         <h:outputText value="#{e.adminentidad.habilitado ? 'Habilitado': 'Deshabilitado'}" />
                     </p:column>    
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:140px">
                         <p:growl id="messages" showDetail="true" />    
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbProvincia.prepareView}">
                                 <f:setPropertyActionListener value="#{e}" target="#{mbProvincia.current}" />

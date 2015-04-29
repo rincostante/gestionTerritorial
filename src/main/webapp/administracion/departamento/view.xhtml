@@ -6,11 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-        <h:outputText value="#{bundle.DepartamentoTitle}" />
-        </ui:define>
         <ui:define name="content"> 
-        <br/>
         <h:form id="frmDepartamentoView">
                 <p:panel id="pnView" header="#{bundle.DepartamentoViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />              
@@ -54,9 +50,16 @@
                         <h:outputLabel value="#{bundle.CentrosPobladosAsociados}" />
                         <p:commandButton value="Ver" type="button" onclick="PF('CentrosPoblados').show();" actionListener="#{mbDepartamento.selected.centrosPoblados}" />      
                     </h:panelGrid>      
-                        <p:dialog style="font-size: 80%" header="Listado de Ctros.Poblados asociados" widgetVar="CentrosPoblados" showEffect="explode" hideEffect="bounce" height="100" width="30%">
-                            <p:dataTable value="#{mbDepartamento.selected.centrosPoblados}" var="e" id="departamentoList" >
-                                <p:column headerText="CentroPoblado" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" rendered="#{e.adminentidad.habilitado == 'true'}" >
+                        <p:dialog style="font-size: 80%" header="Listado de Ctros.Poblados asociados" widgetVar="CentrosPoblados" showEffect="fade" hideEffect="fade" height="200" width="30%">
+                            <p:dataTable value="#{mbDepartamento.selected.centrosPoblados}" var="e" id="departamentoList"  
+                                    rows="5" 
+                                    paginator="true" 
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                    rowsPerPageTemplate="5,10,15" >
+                                <f:facet name="header">
+                                    <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="departamentoList" style="margin-left: 10px"/>
+                                </f:facet>
+                                <p:column headerText="CentroPoblado" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" >
                                     <p:outputLabel value="#{e.nombre}"/> 
                                 </p:column>                        
                             </p:dataTable>

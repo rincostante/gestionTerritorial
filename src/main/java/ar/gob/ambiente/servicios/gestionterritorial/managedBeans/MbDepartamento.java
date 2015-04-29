@@ -7,6 +7,7 @@
 package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.AdminEntidad;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPoblado;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Departamento;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Provincia;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
@@ -41,16 +42,15 @@ public class MbDepartamento implements Serializable {
 
     private Departamento current;
     private DataModel items = null;
+    private List<Departamento> listFilter;
+    private List<CentroPoblado> listCentroPobFilter;
     
     
     @EJB
     private ProvinciaFacade pciaFacade;
     
     @EJB
-    private DepartamentoFacade deptoFacade;
-    private int selectedItemIndex;
-    private String selectParam;    
-    private List<String> listaNombres;  
+    private DepartamentoFacade deptoFacade;   
     private int update; // 0=updateNormal | 1=deshabiliar | 2=habilitar
     private List<Provincia> listProvincias;
     private MbLogin login;
@@ -89,6 +89,23 @@ public class MbDepartamento implements Serializable {
             }
         }
     }
+
+    public List<Departamento> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Departamento> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<CentroPoblado> getListCentroPobFilter() {
+        return listCentroPobFilter;
+    }
+
+    public void setListCentroPobFilter(List<CentroPoblado> listCentroPobFilter) {
+        this.listCentroPobFilter = listCentroPobFilter;
+    }
+    
     public Departamento getCurrent() {
         return current;
     }
@@ -116,7 +133,6 @@ public class MbDepartamento implements Serializable {
     public Departamento getSelected() {
         if (current == null) {
             current = new Departamento();
-            selectedItemIndex = -1;
         }
         return current;
     }   
@@ -131,7 +147,6 @@ public class MbDepartamento implements Serializable {
         return items;
     }
 
-
     
     /*******************************
      ** Métodos de inicialización **
@@ -142,17 +157,6 @@ public class MbDepartamento implements Serializable {
     public String prepareList() {
         recreateModel();
         return "list";
-    }
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/departamento/list";
-        }
-        recreateModel();
-        return redirect;
     }
 
     /**
@@ -189,11 +193,11 @@ public class MbDepartamento implements Serializable {
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelect(){
-        //items = null;
         return "list";
     }
-        /**
-     * @return mensaje que notifica la actualizacion de estado
+    
+    /**
+     * 
      */       
     public void habilitar() {
         update = 2;
@@ -202,7 +206,7 @@ public class MbDepartamento implements Serializable {
     }  
 
     /**
-     * @return mensaje que notifica la actualizacion de estado
+     * 
      */    
     public void deshabilitar() {
         if (getFacade().tieneDependencias(current.getId())){
@@ -216,44 +220,12 @@ public class MbDepartamento implements Serializable {
         }
     }
     
-        
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().existe((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateDepartamentoExistente")));
-        }
-    }
     
     /**
      * Restea la entidad
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }
 
     /*************************
@@ -271,9 +243,14 @@ public class MbDepartamento implements Serializable {
         admEnt.setUsAlta(usLogeado);
         current.setAdminentidad(admEnt);        
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getProvincia())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CreateDepartamentoExistente"));
+                return null;
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DepartamentoCreatedErrorOccured"));
             return null;
@@ -285,7 +262,7 @@ public class MbDepartamento implements Serializable {
      */
     public String update() {
         Date date = new Date(System.currentTimeMillis());
-        //Date dateBaja = new Date();
+        Departamento depto;
         
         // actualizamos según el valor de update
         if(update == 1){
@@ -307,9 +284,31 @@ public class MbDepartamento implements Serializable {
 
         // acualizo
         try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoUpdated"));
-            return "view";
+            if(update == 0){
+                if(getFacade().noExiste(current.getNombre(), current.getProvincia())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoUpdated"));
+                    return "view";
+                }else{
+                    depto = getFacade().getExistente(current.getNombre(), current.getProvincia());
+                    if(depto.getId() == current.getId()){
+                        getFacade().edit(current);
+                        JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoUpdated"));
+                        return "view";
+                    }else{
+                        JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CreateDepartamentoExistente"));
+                        return null;
+                    }
+                }
+            }else if(update == 1){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoDeshabilitado"));
+                return "view";
+            }else{
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoHabilitado"));
+                return "view";
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DepartamentoUpdatedErrorOccured"));
             return null;
@@ -319,19 +318,6 @@ public class MbDepartamento implements Serializable {
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(deptoFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(deptoFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -362,52 +348,6 @@ public class MbDepartamento implements Serializable {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DepartamentoDeletedErrorOccured"));
         }
     }
-
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            /*
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-            */
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */  
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbDepartamento");
-   
-        return "inicio";
-    }  
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-    
- 
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
  
         
     /********************************************************************
@@ -458,7 +398,4 @@ public class MbDepartamento implements Serializable {
             }
         }
     }        
-    
-
-     
 }

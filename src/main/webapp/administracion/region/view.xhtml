@@ -59,18 +59,12 @@
                                   widgetVar="Provincias"
                                   showEffect="fade"
                                   hideEffect="fade"
-                                  height="100"
+                                  height="200"
                                   width="30%">
-                            <p:dataTable value="#{mbRegion.selected.provincias}" 
-                                         var="e" 
-                                         id="regionList" >
-                                <p:column headerText="Provincia" 
-                                          filterMatchMode="contains"
-                                          filterBy="#{e.nombre}"
-                                          sortBy="#{e.nombre}"
-                                          rendered="#{e.adminentidad.habilitado == 'true'}" >
-                                    <p:outputLabel value="#{e.nombre}"/> 
-                                </p:column>                        
+                            <p:dataTable value="#{mbRegion.provVinc}" filteredValue="#{mbRegion.provVincFilter}" var="e" id="provVinc" >
+                                <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{e.nombre}" />
+                                </p:column>                    
                             </p:dataTable>
                         </p:dialog>   
                     </p:panel>      

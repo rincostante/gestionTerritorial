@@ -10,11 +10,9 @@
         <h:outputText value="#{bundle.ProvinciaTitle}" />
         </ui:define>
         <ui:define name="content">
-        <br/>
         <h:form id="frmNew">
-                <p:panel id="pnNew" 
-                         header="#{bundle.ProvinciaNewTitle}" 
-                         style="margin-bottom:10px;">   
+                <p:panel id="pnNew" header="#{bundle.ProvinciaNewTitle}" style="margin-bottom:10px;">  
+                    <p:growl id="messages" />
                     <h:panelGrid columns="2">        
                         <p:outputLabel value="#{bundle.CreateProvinciaLabel_nombre}" for="nombre"/>
                         <p:inputText id="nombre" 
@@ -22,7 +20,6 @@
                                      value="#{mbProvincia.selected.nombre}" 
                                      requiredMessage="#{bundle.CreateProvinciaRequiredMessage_nombre}" 
                                      required="true"/>
-                        <p:message for="nombre" />
                     </h:panelGrid>
                 </p:panel>
                 <p:toolbar>

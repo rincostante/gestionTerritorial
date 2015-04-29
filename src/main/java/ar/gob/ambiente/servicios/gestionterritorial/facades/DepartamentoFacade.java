@@ -58,18 +58,40 @@ public class DepartamentoFacade extends AbstractFacade<Departamento> {
     /**
      * Metodo que verifica si ya existe la entidad.
      * @param aBuscar: es la cadena que buscara para ver si ya existe en la BDD
+     * @param prov
      * @return: devuelve True o False
      */
-    public boolean existe(String aBuscar){
+    public boolean noExiste(String aBuscar, Provincia prov){
         em = getEntityManager();
         String queryString = "SELECT depto FROM Departamento depto "
                 + "WHERE depto.nombre = :stringParam "
+                + "AND depto.provincia = :prov "
                 + "AND depto.adminentidad.habilitado = true";
         
         Query q = em.createQuery(queryString)
-                .setParameter("stringParam", aBuscar);
+                .setParameter("stringParam", aBuscar)
+                .setParameter("prov", prov);
         return q.getResultList().isEmpty();
-    }    
+    }  
+    
+    /**
+     * Metodo que verifica si ya existe la entidad.
+     * @param aBuscar: es la cadena que buscara para ver si ya existe en la BDD
+     * @param prov
+     * @return: devuelve True o False
+     */
+    public Departamento getExistente(String aBuscar, Provincia prov){
+        em = getEntityManager();
+        String queryString = "SELECT depto FROM Departamento depto "
+                + "WHERE depto.nombre = :stringParam "
+                + "AND depto.provincia = :prov "
+                + "AND depto.adminentidad.habilitado = true";
+        
+        Query q = em.createQuery(queryString)
+                .setParameter("stringParam", aBuscar)
+                .setParameter("prov", prov);
+        return (Departamento)q.getSingleResult();
+    }        
     
     /**
      * Método que verifica si la entidad tiene dependencia (Hijos)

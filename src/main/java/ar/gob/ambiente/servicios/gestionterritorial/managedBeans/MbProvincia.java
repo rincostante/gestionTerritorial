@@ -14,10 +14,8 @@ import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.JsfUtil;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.ProvinciaFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.RegionFacade;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
@@ -30,7 +28,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -42,16 +39,13 @@ public class MbProvincia implements Serializable{
 
     private Provincia current;
     private DataModel items = null;
+    private List<Provincia> listFilter;
     
     @EJB
     private RegionFacade regionFacade;
     
     @EJB
     private ProvinciaFacade provinciaFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam;    
-    private List<String> listaNombres;  
     private List<Region> listaRegiones;
     private Usuario usLogeado;
     private boolean iniciado;  
@@ -91,6 +85,14 @@ public class MbProvincia implements Serializable{
             }
         }
     }   
+
+    public List<Provincia> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Provincia> listFilter) {
+        this.listFilter = listFilter;
+    }
     
     public Provincia getCurrent() {
         return current;
@@ -103,17 +105,7 @@ public class MbProvincia implements Serializable{
     
     /********************************
      ** Métodos para la navegación **
-     ********************************/
-    /**
-     * @return La entidad gestionada
-     */
-    public Provincia getSelected() {
-        if (current == null) {
-            current = new Provincia();
-            selectedItemIndex = -1;
-        }
-        return current;
-    }   
+     ********************************/  
     
     /**
      * @return el listado de entidades a mostrar en el list
@@ -136,17 +128,6 @@ public class MbProvincia implements Serializable{
     public String prepareList() {
         recreateModel();
         return "list";
-    }
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/provincia/list";
-        }
-        recreateModel();
-        return redirect;
     }
 
     /**
@@ -176,16 +157,6 @@ public class MbProvincia implements Serializable{
         recreateModel();
         return "/faces/index";
     }
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarProvincia();
-        return "list";
-    }
         
     /**
      * Método para validar que no exista ya una entidad con este nombre al momento de crearla
@@ -212,7 +183,7 @@ public class MbProvincia implements Serializable{
     
     private void validarExistente(Object arg2) throws ValidatorException{
         if(!getFacade().existe((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateProvinciaTitle_nombre")));
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateProvinciaNombreExistente")));
         }
     }
     
@@ -221,9 +192,6 @@ public class MbProvincia implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }
 
     /*************************
@@ -285,35 +253,11 @@ public class MbProvincia implements Serializable{
             return null;
         }
     }
-
-    /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbProvincia");
-        return "inicio";
-    }     
   
     
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(provinciaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(provinciaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -322,6 +266,16 @@ public class MbProvincia implements Serializable{
     public Provincia getProvincia(java.lang.Long id) {
         return provinciaFacade.find(id);
     }    
+    
+    /**
+     * @return La entidad gestionada
+     */
+    public Provincia getSelected() {
+        if (current == null) {
+            current = new Provincia();
+        }
+        return current;
+    }     
     
     /*********************
     ** Métodos privados **
@@ -340,40 +294,7 @@ public class MbProvincia implements Serializable{
     public void setListaRegiones(List<Region> listaRegiones) {
         this.listaRegiones = listaRegiones;
     }
-           
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarProvincia(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }   
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }
-        
+  
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
