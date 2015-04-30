@@ -7,12 +7,10 @@
 package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.AdminEntidad;
-import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPoblado;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPobladoTipo;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.JsfUtil;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.CentroPobladoTipoFacade;
-import ar.gob.ambiente.servicios.gestionterritorial.facades.CentroPobladoFacade;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Enumeration;
@@ -28,7 +26,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -40,19 +37,15 @@ public class MbCentroPobladoTipo  implements Serializable{
     
     private CentroPobladoTipo current;
     private DataModel items = null;
+    private List<CentroPobladoTipo> listFilter;
     
     @EJB
     private CentroPobladoTipoFacade centroPobladoTipoFacade;
     
-    @EJB
-    private CentroPobladoFacade centroPobladoFacade;
-    private int selectedItemIndex;
-    private String selectParam;    
     private int update; // 0=updateNormal | 1=deshabiliar | 2=habilitar
     private Usuario usLogeado;
     private boolean iniciado;
     private MbLogin login;
-    private List<CentroPoblado> ListaCentroPoblado;
     
     /*
      * Creates a new instance of MbCentroPobladoTipo
@@ -90,6 +83,14 @@ public class MbCentroPobladoTipo  implements Serializable{
         }
     }    
 
+    public List<CentroPobladoTipo> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<CentroPobladoTipo> listFilter) {
+        this.listFilter = listFilter;
+    }
+
     public CentroPobladoTipo getCurrent() {
         return current;
     }
@@ -107,7 +108,6 @@ public class MbCentroPobladoTipo  implements Serializable{
     public CentroPobladoTipo getSelected() {
         if (current == null) {
             current = new CentroPobladoTipo();
-            //selectedItemIndex = -1;
         }
         return current;
     }   
@@ -117,23 +117,11 @@ public class MbCentroPobladoTipo  implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
     }
-
-    /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbCentroPobladoTipo");
-   
-        return "inicio";
-    }      
+    
 
     /*******************************
      ** Métodos de inicialización **
@@ -145,17 +133,6 @@ public class MbCentroPobladoTipo  implements Serializable{
         recreateModel();
         return "list";
     }
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/centropobladotipo/list";
-        }
-        recreateModel();
-        return redirect;
-    }
 
     /**
      * @return acción para el detalle de la entidad
@@ -164,11 +141,10 @@ public class MbCentroPobladoTipo  implements Serializable{
         return "view";
     }
 
-    /** (Probablemente haya que embeberlo con el listado para una misma vista)
+    /**
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-    //    listaCentrosPoblados = centroPobladoFacade.findAll();
         current = new CentroPobladoTipo();
         return "new";
     }
@@ -183,15 +159,6 @@ public class MbCentroPobladoTipo  implements Serializable{
     public String prepareInicio(){
         recreateModel();
         return "/faces/index";
-    }
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        //items = null;
-        return "list";
     }
     
      public void habilitar() {
@@ -241,9 +208,6 @@ public class MbCentroPobladoTipo  implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }
 
     /*************************
@@ -309,19 +273,6 @@ public class MbCentroPobladoTipo  implements Serializable{
     /**************************
     **    Métodos de selección     **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(centroPobladoTipoFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(centroPobladoTipoFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -340,41 +291,6 @@ public class MbCentroPobladoTipo  implements Serializable{
     private CentroPobladoTipoFacade getFacade() {
         return centroPobladoTipoFacade;
     }
-   
-    /**
-     * Opera el borrado de la entidad
-     */
-    private void performDestroy() {
-        try {
-            //getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoTipoDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CentroPobladoTipoDeletedErrorOccured"));
-        }
-    }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-    }
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

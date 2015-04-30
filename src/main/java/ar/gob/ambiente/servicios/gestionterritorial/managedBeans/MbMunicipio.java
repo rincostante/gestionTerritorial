@@ -51,9 +51,7 @@ public class MbMunicipio implements Serializable {
     private MunicipioFacade muniFacade;
    
     private Municipio current;
-    private DataModel items = null;
-    private int selectedItemIndex;
-    private String selectParam;        
+    private DataModel items = null;    
     private List<Provincia> listaProvincias;  
     private List<Departamento> comboDepartamentos;
     private Provincia selectProvincia;
@@ -90,14 +88,18 @@ public class MbMunicipio implements Serializable {
     public Municipio getSelected() {
         if (current == null) {
             current = new Municipio();
-            selectedItemIndex = -1;
         }
         return current;
     }   
     
-    /**
-     * @return el listado de entidades a mostrar en el list
-     */
+    public List<Municipio> getListadoFilter() {
+        return listadoFilter;
+    }
+
+    public void setListadoFilter(List<Municipio> listadoFilter) {
+        this.listadoFilter = listadoFilter;
+    }
+    
     public DataModel getItems() {
         if (items == null) {
             items = new ListDataModel(getFacade().findAll());
@@ -120,8 +122,6 @@ public class MbMunicipio implements Serializable {
     public void setListaProvincias(List<Provincia> listaProvincias) {
         this.listaProvincias = listaProvincias;
     }
-
-
 
     public List<Departamento> getComboDepartamentos() {
         return comboDepartamentos;
@@ -153,7 +153,6 @@ public class MbMunicipio implements Serializable {
                 if(s.substring(0, 2).equals("mb")){
                     if(!s.equals("mbMunicipio") && !s.equals("mbLogin")){
                         session.removeAttribute(s);
-  
                     }
                 }
             }
@@ -170,17 +169,6 @@ public class MbMunicipio implements Serializable {
         recreateModel();
         listaProvincias = pciaFacade.findAll();
         return "list";
-    }
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/municipio/list";
-        }
-        recreateModel();
-        return redirect;
     }
 
     /**
@@ -211,54 +199,13 @@ public class MbMunicipio implements Serializable {
         recreateModel();
         return "/faces/index";
     }
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        //buscarMunicipio();
-        return "list";
-    }
-        
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().existe((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateMunicipioExistente")));
-        }
-    }
+
     
     /**
      * Restea la entidad
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }
 
     /*************************
@@ -276,20 +223,18 @@ public class MbMunicipio implements Serializable {
         admEnt.setUsAlta(usLogeado);
         current.setAdminentidad(admEnt);         
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioExistente"));
+                return null;
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("MunicipioCreatedErrorOccured"));
             return null;
-    }}
-
-    public int getSelectedItemIndex() {
-        return selectedItemIndex;
-    }
-
-    public void setSelectedItemIndex(int selectedItemIndex) {
-        this.selectedItemIndex = selectedItemIndex;
+        }
     }
 
     public List<Municipio> getListado() {
@@ -307,7 +252,7 @@ public class MbMunicipio implements Serializable {
      */
     public String update() {
         Date date = new Date(System.currentTimeMillis());
-        //Date dateBaja = new Date();
+        Municipio municipio;
         
         // actualizamos según el valor de update
         if(update == 1){
@@ -329,31 +274,67 @@ public class MbMunicipio implements Serializable {
 
         // acualizo
         try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioUpdated"));
-            return "view";
+            if(update == 0){
+                if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioUpdated"));
+                    return "view";
+                }else{
+                    municipio = getFacade().getExistente(current.getNombre(), current.getDepartamento());
+                    if(municipio.getId() == current.getId()){
+                        getFacade().edit(current);
+                        JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioUpdated"));
+                        return "view";
+                    }else{
+                        JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioExistente"));
+                        return null;
+                    }
+                }
+            }else if(update == 1){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioDeshabilitado"));
+                return "view";
+            }else{
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioHabilitado"));
+                return "view";
+            }            
+
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("MunicipioUpdatedErrorOccured"));
             return null;
         }
     }
     
+    /**
+     * @param event
+     * Metodo que recibe como parametro una provincia y carga los Departamentos relacionados a la misma
+     * Combo Dependiente
+     */
+    
+    public void departamentoChangeListener(ValueChangeEvent event) {      
+        selectProvincia = (Provincia)event.getNewValue();      
+        comboDepartamentos = dptoFacade.getPorProvincia(selectProvincia);      
+    }    
+    
+    public void habilitar() {
+        update = 2;
+        update();        
+        recreateModel();
+    }  
+    
+    /**
+     * 
+     */    
+    public void deshabilitar() {
+        update = 1;
+        update();        
+        recreateModel();
+    }      
+    
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(muniFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(muniFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -372,24 +353,7 @@ public class MbMunicipio implements Serializable {
     private MunicipioFacade getFacade() {
         return muniFacade;
     }
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
 
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    /*
-    private void buscarMunicipio(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }   
-    */
-
-        
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
@@ -438,34 +402,5 @@ public class MbMunicipio implements Serializable {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Municipio.class.getName());
             }
         }
-    }        
-    
-
-
-
-    
-    /**
-     * 
-     * @param event
-     * Metodo que recibe como parametro una provincia y carga los Departamentos relacionados a la misma
-     * Combo Dependiente
-     */
-    
-    public void departamentoChangeListener(ValueChangeEvent event) {      
-        selectProvincia = (Provincia)event.getNewValue();      
-        comboDepartamentos = dptoFacade.getPorProvincia(selectProvincia);      
-    }    
-    
-    public void habilitar() {
-        update = 2;
-        update();        
-        recreateModel();
-    }  
-     /**
-     */    
-    public void deshabilitar() {
-          update = 1;
-          update();        
-          recreateModel();
-       }    
+    }          
 }

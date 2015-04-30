@@ -48,21 +48,6 @@ public class MunicipioFacade extends AbstractFacade<Municipio> {
                 .setParameter("stringParam", "%" + aBuscar + "%"); 
         result = q.getResultList();
         return result;
-    }
-
-    /**
-     * Metodo que verifica si ya existe la entidad.
-     * @param aBuscar: es la cadena que buscara para ver si ya existe en la BDD
-     * @return: devuelve True o False
-     */
-    public boolean existe(String aBuscar){
-        em = getEntityManager();
-        String queryString = "SELECT mun FROM Municipio mun "
-                + "WHERE mun.nombre = :stringParam";
-        
-        Query q = em.createQuery(queryString)
-                .setParameter("stringParam", aBuscar);
-        return q.getResultList().isEmpty();
     }    
 
     /**
@@ -115,5 +100,4 @@ public class MunicipioFacade extends AbstractFacade<Municipio> {
                 .setParameter("depto", depto);
         return q.getResultList().isEmpty();
     }  
-    
 }

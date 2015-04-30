@@ -6,11 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-        <h:outputText value="#{bundle.MunicipioTitle}" />
-        </ui:define>
         <ui:define name="content">
-        <br/>
             <h:form id="frmMunicipioView">
                 <p:panel id="pnView" header="#{bundle.MunicipioViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />

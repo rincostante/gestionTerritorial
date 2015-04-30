@@ -59,8 +59,6 @@ public class MbCentroPoblado implements Serializable {
            
     @EJB
     private CentroPobladoFacade centroPobladoFacade;
-    private int selectedItemIndex;
-    private String selectParam;
     private List<Departamento> listaDepartamentos; 
     private List<CentroPobladoTipo> listaTiposCP;
     private List<Provincia> listaProvincias; 
@@ -216,18 +214,6 @@ public class MbCentroPoblado implements Serializable {
         return "list";
     }     
     
-    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/centropoblado/list";
-        }
-        recreateModel();
-        return redirect;
-    }   
-    
     /**
      * @return acción para el detalle de la entidad
      */
@@ -260,24 +246,8 @@ public class MbCentroPoblado implements Serializable {
     public String prepareInicio(){
         recreateModel();
         return "/faces/index";
-    }
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        return "list";
-    }    
-    /**
-     * Método que verifica que el CentroPoblado que se quiere eliminar no esté siento utilizada por otra entidad
-     * @return 
-     */
-    public String prepareDestroy(){
-            performDestroy();
-            recreateModel();
-        return "view";
-    }     
+    } 
+   
     
     /*************************
     ** Métodos de operación **
@@ -350,21 +320,6 @@ public class MbCentroPoblado implements Serializable {
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(centroPobladoFacade.findAll(), false);
-    }
-    
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(centroPobladoFacade.findAll(), true);
-    }
-
    
      /**
      * @return mensaje que notifica la actualizacion de estado
@@ -412,57 +367,8 @@ public class MbCentroPoblado implements Serializable {
     public CentroPoblado getCentroPoblado(java.lang.Long id) {
         return getFacade().find(id);
     } 
-    
-    /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbCentroPoblado");
-        return "inicio";
-    }     
+   
 
-    
-    /**
-     * Método que deshabilita la entidad
-     */
-    private void performDestroy() {
-        try {
-            // Actualización de datos de administración de la entidad
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CentroPobladoDeletedErrorOccured"));
-        }
-    }      
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-        
     /**
      * Método que deshabilita la entidad
      * @param event
@@ -488,9 +394,6 @@ public class MbCentroPoblado implements Serializable {
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }      
     
     /********************************************************************

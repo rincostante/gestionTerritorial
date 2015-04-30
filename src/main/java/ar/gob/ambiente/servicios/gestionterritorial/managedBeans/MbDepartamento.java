@@ -29,8 +29,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
 
@@ -335,18 +333,6 @@ public class MbDepartamento implements Serializable {
      */
     private DepartamentoFacade getFacade() {
         return deptoFacade;
-    }
-    
-    /**
-     * Opera el borrado de la entidad
-     */
-    private void performDestroy() {
-        try {
-            //getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DepartamentoDeletedErrorOccured"));
-        }
     }
  
         

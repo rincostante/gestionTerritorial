@@ -5,16 +5,9 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
-      
-    <h:head>
-        <title>#{bundle.CentroPobladoTitle}</title>
-    </h:head>
+
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.CentroPobladoTitle}" />
-        </ui:define>
         <ui:define name="content">
-        <br/>   
             <f:metadata>  
                 <f:event listener="#{mbCentroPoblado.iniciar}" type="preRenderView"></f:event>  
             </f:metadata> 
@@ -23,7 +16,6 @@
                     <h:panelGrid columns="6">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbCentroPoblado.prepareCreate}"/>
                         <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbCentroPoblado.prepareList}" update="centroPobladoList"/>
-                        <p:commandButton icon="ui-icon-home" value="Inicio" action="#{mbCentroPoblado.cleanUp()}"/>
                     </h:panelGrid>
                 </p:panel>          
                 <br/>

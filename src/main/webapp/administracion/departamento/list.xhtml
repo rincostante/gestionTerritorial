@@ -20,6 +20,7 @@
                     </h:panelGrid>  
                 </p:panel>   
                 <p:dataTable value="#{mbDepartamento.items}" 
+                             filteredValue="#{mbDepartamento.listFilter}" 
                              var="e" 
                              id="departamentoList" 
                              rows="5"

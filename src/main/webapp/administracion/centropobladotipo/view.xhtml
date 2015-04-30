@@ -6,15 +6,10 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.CentroPobladoTipoTitle}" />
-        </ui:define>
         <ui:define name="content">
-            <br/>
             <h:form id="frmCentroPobladoTipoView">
                 <p:panel id="pnView" header="#{bundle.CentroPobladoTipoViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
-                    
                     <h:panelGrid columns="2">
                         <h:outputLabel  value="#{bundle.CreateCentroPobladoTipoLabel_nombre}"/>
                         <h:outputText   value="#{mbCentroPobladoTipo.selected.nombre}" title="#{bundle.CreateCentroPobladoTipoTitle_nombre}"/>
