@@ -10,7 +10,7 @@
         <br/>
             <h:form id="frmEdit">
                 <p:panel id="pnEdit" header="#{bundle.EspRegionEditTitle}" style="margin-bottom:10px;">
-                    <p:messages id="messages" />
+                    <p:growl id="messages" />
                     <h:panelGrid columns="4">
                         <h:inputHidden id="id" value="#{mbEspRegion.selected.id}" />
                         <p:outputLabel value="#{bundle.CreateEspRegionLabel_nombre}" for="nombre"/>

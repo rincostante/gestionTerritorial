@@ -185,8 +185,9 @@ public class MbEspRegion implements Serializable{
 
     /**
      * Método que deshabilita la entidad
+     * @return 
      */
-    public void deshabilitar() {
+    public String deshabilitar() {
        if (getFacade().tieneDependencias(current.getId())){
           update = 1;
           update();        
@@ -195,7 +196,8 @@ public class MbEspRegion implements Serializable{
         else{
             //No Deshabilita 
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EspecificidadDeRegionNonDeletable"));            
-        }
+       }
+       return "view";
     }     
     
     

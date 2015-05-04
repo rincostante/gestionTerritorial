@@ -18,10 +18,9 @@
                         <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbCentroPoblado.prepareList}" update="centroPobladoList"/>
                     </h:panelGrid>
                 </p:panel>          
-                <br/>
                 <p:dataTable value="#{mbCentroPoblado.items}" var="e" id="centroPobladoList" rows="5" paginator="true" widgetVar="cpTable"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             rowsPerPageTemplate="5,10,15">
+                             rowsPerPageTemplate="5,10,15" filteredValue="#{mbCentroPoblado.listadoFilter}">
                     
                     <f:facet name="header">#{bundle.CentroPobladoListTitle}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
@@ -44,7 +43,7 @@
                         <p:outputLabel value="#{e.departamento.provincia.nombre}"/>
                     </p:column>                                                     
 
-                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" footerText="" filterMatchMode="equals">
+                    <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" filterMatchMode="equals">
                         <f:facet name="filter">
                             <p:selectOneMenu onchange="PF('cpTable').filter()" style="font-size: 80%">
                                 <f:converter converterId="javax.faces.Boolean" />
@@ -56,7 +55,7 @@
                         <h:outputText value="#{e.adminentidad.habilitado ? 'Habilitado': 'Deshabilitado'}" />
                     </p:column>                    
                     
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:140px">
                     <p:commandButton icon="ui-icon-zoomin" action="#{mbCentroPoblado.prepareView}" title="Ver Detalle">
                         <f:setPropertyActionListener value="#{e}" target="#{mbCentroPoblado.current}" />
                     </p:commandButton>

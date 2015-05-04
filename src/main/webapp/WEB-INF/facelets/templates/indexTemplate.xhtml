@@ -36,7 +36,7 @@
                             <p:menuitem value="Centro Poblado" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCentroPoblado}/list.xhtml"/>
                             <p:menuitem value="Tipo Centro Poblado" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoCentroPoblado}/list.xhtml" />
                         </p:submenu>                         
-                        <p:submenu label="Seguridad">
+                        <p:submenu label="Seguridad" rendered="#{mbLogin.ambito == 'Seguridad'}">
                             <p:menuitem value="Usuarios" 
                                         url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>
                             <p:menuitem value="Roles" 

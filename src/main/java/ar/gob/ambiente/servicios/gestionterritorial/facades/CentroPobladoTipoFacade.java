@@ -74,10 +74,10 @@ public class CentroPobladoTipoFacade  extends AbstractFacade<CentroPobladoTipo> 
      * @param id: ID de la entidad
      * @return: True o False
      */
-    public boolean tieneDependencias(Long id){
+    public boolean noTieneDependencias(Long id){
         em = getEntityManager();        
         String queryString = "SELECT cp FROM CentroPoblado cp " 
-                + "WHERE cp.centropobladotipo.id = :idParam "
+                + "WHERE cp.centroPobladoTipo.id = :idParam "
                 + "AND cp.adminentidad.habilitado = true";        
         Query q = em.createQuery(queryString)
                 .setParameter("idParam", id);

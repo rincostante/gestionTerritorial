@@ -6,7 +6,6 @@
 
 package ar.gob.ambiente.servicios.gestionterritorial.entidades;
 
-import ar.gob.ambiente.servicios.gestionterritorial.entidades.AdminEntidad;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

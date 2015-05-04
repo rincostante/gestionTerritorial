@@ -6,21 +6,17 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
       <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.RolTitle}" />
-        </ui:define>
         <ui:define name="content">
-        <br/>
         <h:form id="frmNew">    
                 <p:panel id="pnNew" header="#{bundle.RolNewTitle}" style="margin-bottom:10px;">    
-                    <h:panelGrid columns="3">
+                    <p:growl id="messages" />
+                    <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.CreateRolLabel_nombre}" for="nombre"/>
                         <p:inputText id="nombre" validator="#{mbRol.validarInsert}" value="#{mbRol.selected.nombre}" requiredMessage="#{bundle.CreateRolRequiredMessage_nombre}" required="true"/>
-                        <p:message for="nombre" />
                     </h:panelGrid>
                 </p:panel>             
                 <p:toolbar>   
-                <f:facet name="left">
+                    <f:facet name="left">
                         <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbRol.create}" update="pnNew"/>  
                         <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: next">
                             <p:ajax update="pnNew" resetValues="true" />

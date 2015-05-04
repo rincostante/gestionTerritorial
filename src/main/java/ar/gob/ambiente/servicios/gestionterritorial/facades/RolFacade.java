@@ -76,7 +76,7 @@ public class RolFacade extends AbstractFacade<Rol> {
         
         String queryString = "SELECT usu FROM Usuario usu " 
                 + "WHERE usu.rol.id = :idParam "
-                + "AND usu.adminentidad.habilitado = true";      
+                + "AND usu.admin.habilitado = true";      
         
         Query q = em.createQuery(queryString)
                 .setParameter("idParam", id);

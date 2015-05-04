@@ -6,81 +6,48 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.CentroPobladoTitle}" />
-        </ui:define>
         <ui:define name="content">
-        <br/>
             <h:form id="frmEdit">
                 <p:panel id="pnEdit" header="#{bundle.CentroPobladoEditTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="4">
+                    <p:growl id="messages" />
+                    <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Tipo}" for="tipo"/>
-                        <p:selectOneMenu id="tipo" 
-                                         value="#{mbCentroPoblado.selected.centroPobladoTipo}"
-                                         requiredMessage="#{bundle.CreateCtroYTipoRequiredMessage}" 
-                                         required="true">
-                            <f:selectItem itemLabel="Seleccione el Tipo" 
-                                          itemValue="" 
-                                          noSelectionOption="true" />
-                            <f:selectItems value="#{mbCentroPoblado.listaTiposCP}" 
-                                           var="tipo" 
-                                           itemLabel="#{tipo.nombre}" 
-                                           itemValue="#{tipo}"/>
+                        <p:selectOneMenu id="tipo" value="#{mbCentroPoblado.selected.centroPobladoTipo}"
+                                         requiredMessage="#{bundle.CreateCtroYTipoRequiredMessage}" required="true">
+                            <f:selectItem itemLabel="Seleccione el Tipo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbCentroPoblado.listaTiposCP}" var="tipo" itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Provincia}" for="prov" />
-                        <p:selectOneMenu 
-                                        id="prov" 
-                                        value="#{mbCentroPoblado.selected.departamento.provincia}" 
-                                         required="true" 
-                                         requiredMessage="#{bundle.CreateDepartamentoProvinciaRequiredMessage}" 
-                                         valueChangeListener="#{mbCentroPoblado.provinciaChangeListener}">
-                            <f:selectItem itemLabel="Seleccione la Provincia" 
-                                        itemValue="" 
-                                        noSelectionOption="true" />
-                            <f:selectItems 
-                                        value="#{mbCentroPoblado.listaProvincias}" 
-                                        var="prov" 
-                                        itemLabel="#{prov.nombre}" 
-                                        itemValue="#{prov}"/>
+                        <p:selectOneMenu id="prov" value="#{mbCentroPoblado.selected.departamento.provincia}" required="true" 
+                                         requiredMessage="#{bundle.CreateDepartamentoProvinciaRequiredMessage}" valueChangeListener="#{mbCentroPoblado.provinciaChangeListener}">
+                            <f:selectItem itemLabel="Seleccione la Provincia" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbCentroPoblado.listaProvincias}" var="prov" itemLabel="#{prov.nombre}" itemValue="#{prov}"/>
                             <p:ajax event="change" update="depto"/>
                         </p:selectOneMenu>                         
                         
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Departamento}" for="depto"/>
-                        <p:selectOneMenu 
-                                        id = "depto" 
-                                        value = "#{mbCentroPoblado.selected.departamento}" 
-                                        requiredMessage = "#{bundle.CreateCentroPobladoDepartamentoRequiredMessage}" 
-                                        required = "true">
-                            <f:selectItem 
-                                        itemLabel = "Seleccione el Departamento" 
-                                        itemValue = "" 
-                                        noSelectionOption = "true" />
-                            <f:selectItems 
-                                        value = "#{mbCentroPoblado.listaDepartamentos}" 
-                                        var = "depto" 
-                                        itemLabel = "#{depto.nombre}" 
-                                        itemValue = "#{depto}" />
+                        <p:selectOneMenu id = "depto" value = "#{mbCentroPoblado.selected.departamento}" 
+                                        requiredMessage = "#{bundle.CreateCentroPobladoDepartamentoRequiredMessage}" required = "true">
+                            <f:selectItem itemLabel = "Seleccione el Departamento" itemValue = "" noSelectionOption = "true" />
+                            <f:selectItems value = "#{mbCentroPoblado.listaDepartamentos}" var = "depto" itemLabel = "#{depto.nombre}" itemValue = "#{depto}" />
                         </p:selectOneMenu>                         
                                                                       
-                        <p:outputLabel 
-                                    value="#{bundle.CreateCentroPobladoLabel_nombre}" for="nombre" />                        
-                        <p:inputText 
-                                    id="nombre" 
-                                    value="#{mbCentroPoblado.selected.nombre}" 
-                                    requiredMessage="#{bundle.CreateCentroPobladoRequiredMessage_nombre}" 
-                                    required="true"/>
-                        <h:inputHidden id="id" value="#{mbCentroPoblado.selected.id}" />
-                        <p:message for="nombre" />                                           
+                        <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_nombre}" for="nombre" />                        
+                        <p:inputText id="nombre" value="#{mbCentroPoblado.selected.nombre}" requiredMessage="#{bundle.CreateCentroPobladoRequiredMessage_nombre}" required="true"/>
+                        <h:inputHidden id="id" value="#{mbCentroPoblado.selected.id}" />                                     
                     </h:panelGrid>
                 </p:panel>
                 
                 <p:toolbar>
                     <f:facet name="left">
                         <p:commandButton icon="ui-icon-pencil" action="#{mbCentroPoblado.update}" value="Guardar" style="margin-right:10px;" update="pnEdit"/>
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right"><p:ajax update="pnEdit" resetValues="true" /></p:commandButton>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>
                     </f:facet>
-                    <f:facet name="right"><p:commandButton icon="ui-icon-arrowreturnthick-1-w" action="#{mbCentroPoblado.prepareList}" value="Volver" immediate="true"/>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" action="#{mbCentroPoblado.prepareList}" value="Volver" immediate="true"/>
                     </f:facet>                    
                 </p:toolbar>
             </h:form>

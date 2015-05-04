@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -206,7 +205,7 @@ public class MbDepartamento implements Serializable {
     /**
      * 
      */    
-    public void deshabilitar() {
+    public String deshabilitar() {
         if (getFacade().tieneDependencias(current.getId())){
             update = 1;
             update();        
@@ -216,6 +215,7 @@ public class MbDepartamento implements Serializable {
             //No Deshabilita 
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DepartamentoNonDeletable"));            
         }
+        return "view";
     }
     
     

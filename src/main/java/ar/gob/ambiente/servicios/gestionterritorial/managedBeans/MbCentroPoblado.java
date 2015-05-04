@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -33,8 +32,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
 
@@ -266,9 +263,14 @@ public class MbCentroPoblado implements Serializable {
         admEnt.setUsAlta(usLogeado);
         current.setAdminentidad(admEnt);        
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CreateCentroPobladoExistente"));
+                return null;
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CentroPobladoCreatedErrorOccured"));
             return null;
@@ -280,7 +282,7 @@ public class MbCentroPoblado implements Serializable {
      */
     public String update() {
         Date date = new Date(System.currentTimeMillis());
-        //Date dateBaja = new Date();
+        CentroPoblado centroPoblado;
         
         // actualizamos según el valor de update
         if(update == 1){
@@ -301,9 +303,31 @@ public class MbCentroPoblado implements Serializable {
         }
         // acualizo
         try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoUpdated"));
-            return "view";
+            if(update == 0){
+                if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoUpdated"));
+                    return "view";
+                }else{
+                    centroPoblado = getFacade().getExistente(current.getNombre(), current.getDepartamento());
+                    if(centroPoblado.getId() == current.getId()){
+                        getFacade().edit(current);
+                        JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoUpdated"));
+                        return "view";
+                    }else{
+                        JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CreateCentroPobladoExistente"));
+                        return null;
+                    }
+                }
+            }else if(update == 1){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoDeshabilitado"));
+                return "view";
+            }else{
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoHabilitado"));
+                return "view";
+            }         
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CentroPobladoUpdatedErrorOccured"));
             return null;
@@ -322,44 +346,14 @@ public class MbCentroPoblado implements Serializable {
     **************************/
    
      /**
-     * @return mensaje que notifica la actualizacion de estado
+      * 
      */    
     public void deshabilitar() {
-          update = 1;
-          update();        
-          recreateModel();
+        update = 1;
+        update();        
+        recreateModel();
     } 
-     
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
     
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().existe((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateCentroPobladoExistente")));
-        }
-    }
-    
-
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente

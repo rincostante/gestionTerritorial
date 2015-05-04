@@ -6,39 +6,36 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-    <ui:define name="title">
-            <h:outputText value="#{bundle.CentroPobladoTitle}" />
-    </ui:define>
-    <ui:define name="content"> 
-    <br/>
-    <h:form id="frmNew">
-        <p:panel id="pnNew" header="#{bundle.CentroPobladoNewTitle}" style="margin-bottom:10px;">     
+        <ui:define name="content"> 
+            <h:form id="frmNew">
+                <p:panel id="pnNew" header="#{bundle.CentroPobladoNewTitle}" style="margin-bottom:10px;">     
+                    <p:growl id="messages" />
                     <h:panelGrid columns="2">
-                        <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Tipo}" for="tipo"/>
-                        <p:selectOneMenu id="tipo" value="#{mbCentroPoblado.selected.centroPobladoTipo}" requiredMessage="#{bundle.CreateCentroPobladoTipoCPRequiredMessage}" required="true">
-                            <f:selectItem itemLabel="Seleccione el Tipo" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbCentroPoblado.listaTiposCP}" var="tipo" itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
-                        </p:selectOneMenu>    
-                        
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Provincia}" for="prov" />
                         <p:selectOneMenu id="prov" value="#{mbCentroPoblado.selectProvincia}" required="true"  requiredMessage="#{bundle.CreateDepartamentoProvinciaRequiredMessage}" valueChangeListener="#{mbCentroPoblado.provinciaChangeListener}">
                             <f:selectItem itemLabel="Seleccione la Provincia" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbCentroPoblado.listaProvincias}" var="prov" itemLabel="#{prov.nombre}" itemValue="#{prov}"/>
                             <p:ajax event="change" update="depto"/>
                         </p:selectOneMenu>  
-                        
+
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Departamento}" for="depto"/>
                         <p:selectOneMenu id="depto" value="#{mbCentroPoblado.selected.departamento}">
                             <f:selectItem itemLabel="Seleccione el Departamento" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbCentroPoblado.listaDepartamentos}"  var="depto" itemLabel="#{depto.nombre}" itemValue="#{depto}"/>
                         </p:selectOneMenu> 
-                                  
+
+                        <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_Tipo}" for="tipo"/>
+                        <p:selectOneMenu id="tipo" value="#{mbCentroPoblado.selected.centroPobladoTipo}" requiredMessage="#{bundle.CreateCentroPobladoTipoCPRequiredMessage}" required="true">
+                            <f:selectItem itemLabel="Seleccione el Tipo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbCentroPoblado.listaTiposCP}" var="tipo" itemLabel="#{tipo.nombre}" itemValue="#{tipo}"/>
+                        </p:selectOneMenu>  
+
                         <p:outputLabel value="#{bundle.CreateCentroPobladoLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" validator="#{mbCentroPoblado.validarInsert}" value="#{mbCentroPoblado.selected.nombre}" requiredMessage="#{bundle.CreateCentroPobladoRequiredMessage_nombre}" required="true"/> 
+                        <p:inputText id="nombre" value="#{mbCentroPoblado.selected.nombre}" requiredMessage="#{bundle.CreateCentroPobladoRequiredMessage_nombre}" required="true"/> 
                         <p:message for="nombre"/>
                     </h:panelGrid>
                 </p:panel>
-                
+
                 <p:toolbar>
                     <f:facet name="left">
                         <p:commandButton icon="ui-icon-check"  value="Guardar"  action="#{mbCentroPoblado.create}"  update="pnNew"/> 

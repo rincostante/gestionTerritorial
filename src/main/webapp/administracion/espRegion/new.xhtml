@@ -10,7 +10,7 @@
             <br/>
             <h:form id="frmNew">
                 <p:panel id="pnNew" header="#{bundle.EspRegionNewTitle}" style="margin-bottom:10px;">
-                    <p:messages id="messages" />
+                    <p:growl id="messages" />
                     <h:panelGrid columns="3">
                         <p:outputLabel value="#{bundle.CreateEspRegionLabel_nombre}" for="nombre"/>
                         <p:inputText id="nombre" validator="#{mbEspRegion.validarInsert}" value="#{mbEspRegion.selected.nombre}" 

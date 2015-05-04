@@ -47,9 +47,7 @@ public class MbUsuario implements Serializable{
     private RolFacade rolFacade;
     @EJB
     private UsuarioFacade usuarioFacade;       
-    private List<Rol> listaRol;
-    private int selectedItemIndex;
-    private String selectParam;   
+    private List<Rol> listaRol; 
 
     
     /**
@@ -139,7 +137,6 @@ public class MbUsuario implements Serializable{
     public Usuario getSelected() {
         if (current == null) {
             current = new Usuario();
-            selectedItemIndex = -1;
         }
         return current;
     }  
@@ -153,16 +150,6 @@ public class MbUsuario implements Serializable{
         //recreateModel();
         return "list";
     }    
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "seguridad/usuario/list";
-        }
-        recreateModel();
-        return redirect;
-    }
     
     /**
      * @return acción para el detalle de la entidad
@@ -196,40 +183,6 @@ public class MbUsuario implements Serializable{
         recreateModel();
         return "/faces/index";
     }
-    
-        /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        //items = null;
-       // buscarGenero();//
-        return "list";
-    }
-    
-         /**
-     * @return mensaje que notifica la actualizacion de estado
-     */    
-    public String habilitar() {
-        current.getAdmin().setHabilitado(true);
-        update();        
-        recreateModel();
-        return "view";
-    } 
-    
-       public String deshabilitar() {
-        //Si esta libre de dependencias deshabilita
-        if (getFacade().tieneDependencias(current.getId())){
-            current.getAdmin().setHabilitado(false);
-            update();        
-            recreateModel();
-        }
-        else{
-            //No Deshabilita 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioNonDeletable"));            
-        }
-        return "view";
-    } 
     
     /**
      * 
@@ -372,22 +325,7 @@ public class MbUsuario implements Serializable{
     public Usuario getUsuario(java.lang.Long id) {
         return getFacade().find(id);
     }    
-    
-    /**
-     * Método para revocar la sesión del MB
-     * @return 
-     */
-    public String cleanUp(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        session.removeAttribute("mbUsuario");
    
-        return "inicio";
-    }      
-    
-    
-    
-    
     
     /*********************
     ** Métodos privados **

@@ -54,27 +54,13 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
         result = q.getResultList();
         return result;
     }
-    
-       
-    public boolean existe(String nombre){
-        em = getEntityManager();       
-        String queryString = "SELECT cp.nombre FROM CentroPoblado cp "
-                + "WHERE cp.nombre = :nombre";
-        Query q = em.createQuery(queryString)
-                .setParameter("nombre", nombre);
-        return q.getResultList().isEmpty();        
-        
-    }    
-
+     
     public List<String> getNombre(){
         em = getEntityManager();
         String queryString = "SELECT cp.nombre FROM CentroPoblado cp";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
-
-
-
 
     /**
      * Metodo que verifica si ya existe la entidad.
@@ -115,8 +101,4 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
             return null;
         }
     }       
-
-    public boolean tieneDependencias(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

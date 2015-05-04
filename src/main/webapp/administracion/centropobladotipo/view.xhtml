@@ -40,7 +40,10 @@
                                         rendered="#{not mbCentroPobladoTipo.selected.adminentidad.habilitado}"/>
                         <h:outputText   value="#{mbCentroPobladoTipo.selected.adminentidad.strFechaBaja}" 
                                         rendered="#{not mbCentroPobladoTipo.selected.adminentidad.habilitado}"
-                                        title="#{bundle.FechaBaja}"/>                   
+                                        title="#{bundle.FechaBaja}"/>     
+                        
+                        <h:outputLabel value="#{bundle.CentrosPobladosAsociados}" />
+                        <p:commandButton value="Ver" type="button" onclick="PF('CentrosPoblados').show();" actionListener="#{mbCentroPobladoTipo.selected.centrosPoblados}" />    
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
@@ -48,7 +51,21 @@
                         <p:commandButton icon="ui-icon-refresh" action="#{mbCentroPobladoTipo.prepareList}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
-
+                <p:dialog style="font-size: 80%" header="Listado de Ctros.Poblados asociados" widgetVar="CentrosPoblados" showEffect="fade" hideEffect="fade" height="200" width="30%">
+                    <p:dataTable value="#{mbCentroPobladoTipo.selected.centrosPoblados}" var="e" id="centrosPobladosList" 
+                            filteredValue="#{mbCentroPobladoTipo.listCentroPobladoFilter}" 
+                            rows="5" 
+                            paginator="true" 
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                            rowsPerPageTemplate="5,10,15" >
+                        <f:facet name="header">
+                            <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="centrosPobladosList" style="margin-left: 10px"/>
+                        </f:facet>
+                        <p:column headerText="CentroPoblado" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" >
+                            <p:outputLabel value="#{e.nombre}"/> 
+                        </p:column>                        
+                    </p:dataTable>
+                </p:dialog>   
             </h:form>
         </ui:define>
     </ui:composition>

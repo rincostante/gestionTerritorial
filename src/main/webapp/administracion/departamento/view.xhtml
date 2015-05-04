@@ -50,26 +50,26 @@
                         <h:outputLabel value="#{bundle.CentrosPobladosAsociados}" />
                         <p:commandButton value="Ver" type="button" onclick="PF('CentrosPoblados').show();" actionListener="#{mbDepartamento.selected.centrosPoblados}" />      
                     </h:panelGrid>      
-                        <p:dialog style="font-size: 80%" header="Listado de Ctros.Poblados asociados" widgetVar="CentrosPoblados" showEffect="fade" hideEffect="fade" height="200" width="30%">
-                            <p:dataTable value="#{mbDepartamento.selected.centrosPoblados}" var="e" id="departamentoList"  
-                                    rows="5" 
-                                    paginator="true" 
-                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
-                                    rowsPerPageTemplate="5,10,15" >
-                                <f:facet name="header">
-                                    <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="departamentoList" style="margin-left: 10px"/>
-                                </f:facet>
-                                <p:column headerText="CentroPoblado" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" >
-                                    <p:outputLabel value="#{e.nombre}"/> 
-                                </p:column>                        
-                            </p:dataTable>
-                        </p:dialog>   
-                    </p:panel>       
+                </p:panel>       
                 <p:toolbar>
-                    <f:facet name="left">
+                    <f:facet name="right">
                         <p:commandButton icon="ui-icon-refresh" action="#{mbDepartamento.prepareList()}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
+                <p:dialog style="font-size: 80%" header="Listado de Ctros.Poblados asociados" widgetVar="CentrosPoblados" showEffect="fade" hideEffect="fade" height="200" width="30%">
+                    <p:dataTable value="#{mbDepartamento.selected.centrosPoblados}" var="e" id="departamentoList"  
+                            rows="5" 
+                            paginator="true" 
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                            rowsPerPageTemplate="5,10,15" >
+                        <f:facet name="header">
+                            <p:commandButton icon="ui-icon-refresh" value="Actualizar" update="departamentoList" style="margin-left: 10px"/>
+                        </f:facet>
+                        <p:column headerText="CentroPoblado" filterMatchMode="contains" filterBy="#{e.nombre}" sortBy="#{e.nombre}" >
+                            <p:outputLabel value="#{e.nombre}"/> 
+                        </p:column>                        
+                    </p:dataTable>
+                </p:dialog>   
             </h:form>
         </ui:define>
     </ui:composition>

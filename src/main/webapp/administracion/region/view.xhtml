@@ -54,25 +54,25 @@
                         <h:outputLabel   value="#{bundle.ProvinciasAsociadas}" />
                         <p:commandButton value="Ver" type="button" onclick="PF('Provincias').show();" actionListener="#{mbRegion.verProvincias()}" />      
                     </h:panelGrid>   
-                        <p:dialog style="font-size: 80%"
-                                  header="Listado de provincias asociadas"
-                                  widgetVar="Provincias"
-                                  showEffect="fade"
-                                  hideEffect="fade"
-                                  height="200"
-                                  width="30%">
-                            <p:dataTable value="#{mbRegion.provVinc}" filteredValue="#{mbRegion.provVincFilter}" var="e" id="provVinc" >
-                                <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
-                                    <h:outputText value="#{e.nombre}" />
-                                </p:column>                    
-                            </p:dataTable>
-                        </p:dialog>   
-                    </p:panel>      
+                </p:panel>      
                 <p:toolbar>
-                    <f:facet name="left">
+                    <f:facet name="right">
                         <p:commandButton icon="ui-icon-refresh" action="#{mbRegion.prepareList()}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
+                <p:dialog style="font-size: 80%"
+                          header="Listado de provincias asociadas"
+                          widgetVar="Provincias"
+                          showEffect="fade"
+                          hideEffect="fade"
+                          height="200"
+                          width="30%">
+                    <p:dataTable value="#{mbRegion.provVinc}" filteredValue="#{mbRegion.provVincFilter}" var="e" id="provVinc" >
+                        <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{e.nombre}" />
+                        </p:column>                    
+                    </p:dataTable>
+                </p:dialog>   
             </h:form>
         </ui:define>
     </ui:composition>

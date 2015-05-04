@@ -7,6 +7,7 @@
 package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.AdminEntidad;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPoblado;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPobladoTipo;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.JsfUtil;
@@ -38,6 +39,7 @@ public class MbCentroPobladoTipo  implements Serializable{
     private CentroPobladoTipo current;
     private DataModel items = null;
     private List<CentroPobladoTipo> listFilter;
+    private List<CentroPoblado> listCentroPobladoFilter;
     
     @EJB
     private CentroPobladoTipoFacade centroPobladoTipoFacade;
@@ -82,6 +84,14 @@ public class MbCentroPobladoTipo  implements Serializable{
             }
         }
     }    
+
+    public List<CentroPoblado> getListCentroPobladoFilter() {
+        return listCentroPobladoFilter;
+    }
+
+    public void setListCentroPobladoFilter(List<CentroPoblado> listCentroPobladoFilter) {
+        this.listCentroPobladoFilter = listCentroPobladoFilter;
+    }
 
     public List<CentroPobladoTipo> getListFilter() {
         return listFilter;
@@ -167,11 +177,17 @@ public class MbCentroPobladoTipo  implements Serializable{
         recreateModel();
     }  
      /**
+     * @return 
      */    
-    public void deshabilitar() {
-        update = 1;
-        update();        
-        recreateModel();
+    public String deshabilitar() {
+        if(getFacade().noTieneDependencias(current.getId())){
+            update = 1;
+            update();        
+            recreateModel();
+        }else{
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CentroPobladoTipoNonDeletable"));
+        }
+        return "view";
     } 
     
     /**

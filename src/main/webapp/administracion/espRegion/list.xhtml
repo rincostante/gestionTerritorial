@@ -5,20 +5,18 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>#{bundle.EspRegionTitle}</title>
-    </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
         <ui:define name="content">
-        <br/> 
-         <h:form>
+            <f:metadata>  
+                <f:event listener="#{mbEspRegion.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>      
+            <h:form>
                 <p:panel id="espRegionForm" header="#{bundle.EspRegionListTitle}" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar">
                     <h:panelGrid columns="6">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEspRegion.prepareCreate}"/>
                         <p:commandButton icon="ui-icon-refresh" value="Refrescar Listado" action="#{mbEspRegion.prepareList}" update="espRegionList"/>                      
                     </h:panelGrid>   
-                </p:panel>
-                <br/>           
+                </p:panel>   
                 <p:dataTable value="#{mbEspRegion.items}" 
                              var="e" 
                              id="espRegionList" 

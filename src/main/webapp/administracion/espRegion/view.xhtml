@@ -38,25 +38,26 @@
                         <h:outputLabel value="#{bundle.RegionesAsociadas}" />
                         <p:commandButton value="Ver" type="button" onclick="PF('Regiones').show();" actionListener="#{mbEspRegion.selected.regiones}" />                           
                     </h:panelGrid>                    
-                        <p:dialog style="font-size: 80%" 
-                                  header="Listado de regiones asociadas" 
-                                  widgetVar="Regiones" 
-                                  showEffect="fade" 
-                                  hideEffect="fade" 
-                                  height="100" 
-                                  width="30%">
-                            <p:dataTable value="#{mbEspRegion.selected.regiones}" var="er" id="espRegionList">
-                                <p:column headerText="Región" filterMatchMode="contains" filterBy="#{er.nombre}" sortBy="#{er.nombre}" rendered="#{er.adminentidad.habilitado == 'true'}" >
-                                    <p:outputLabel value="#{er.nombre}"/> 
-                                </p:column>                        
-                            </p:dataTable>
-                        </p:dialog>
                 </p:panel>
                 <p:toolbar>
-                    <f:facet name="left">
+                    <f:facet name="right">
                         <p:commandButton icon="ui-icon-refresh" action="#{mbEspRegion.prepareList}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
+            
+                <p:dialog style="font-size: 80%" 
+                          header="Listado de regiones asociadas" 
+                          widgetVar="Regiones" 
+                          showEffect="fade" 
+                          hideEffect="fade" 
+                          height="100" 
+                          width="30%">
+                    <p:dataTable value="#{mbEspRegion.selected.regiones}" var="er" id="espRegionList">
+                        <p:column headerText="Región" filterMatchMode="contains" filterBy="#{er.nombre}" sortBy="#{er.nombre}" rendered="#{er.adminentidad.habilitado == 'true'}" >
+                            <p:outputLabel value="#{er.nombre}"/> 
+                        </p:column>                        
+                    </p:dataTable>
+                </p:dialog>
 
             </h:form>
         </ui:define>

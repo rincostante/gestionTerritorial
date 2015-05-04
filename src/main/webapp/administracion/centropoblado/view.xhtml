@@ -6,16 +6,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
-        <ui:define name="title">
-            <h:outputText value="#{bundle.CentroPobladoTitle}" />
-        </ui:define>
-        
         <ui:define name="content">
-            <br/>
             <h:form id="frmCentroPobladoView">
-                <p:panel id="pnView" 
-                         header="#{bundle.CentroPobladoViewTitle}" 
-                         style="margin-bottom:10px;">
+                <p:panel id="pnView" header="#{bundle.CentroPobladoViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     
                     <h:panelGrid columns="2">
@@ -62,9 +55,7 @@
                                         rendered="#{not mbCentroPoblado.selected.adminentidad.habilitado}"/>
                         <h:outputText   value="#{mbCentroPoblado.selected.adminentidad.strFechaBaja}" 
                                         rendered="#{not mbCentroPoblado.selected.adminentidad.habilitado}"
-                                        title="#{bundle.FechaBaja}"/>
-
-      
+                                        title="#{bundle.FechaBaja}"/> 
                     </h:panelGrid>                    
                 </p:panel>
                 
