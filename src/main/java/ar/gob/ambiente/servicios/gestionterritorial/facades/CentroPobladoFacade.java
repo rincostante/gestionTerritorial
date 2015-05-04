@@ -101,4 +101,43 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
             return null;
         }
     }       
+    
+    public List<CentroPoblado> getCentrosXDeptoTipo(Long idDepto, Long idTipo){
+        em = getEntityManager();
+        String queryString = "SELECT cp FROM CentroPoblado cp "
+                + "WHERE cp.departamento.id = :idDepto "
+                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.adminentidad.habilitado = true";
+        Query q = em.createQuery(queryString)
+                .setParameter("idDepto", idDepto)
+                .setParameter("idTipo", idTipo);
+        return q.getResultList();         
+    }
+    
+    public List<CentroPoblado> getCentrosXProvTipo(Long idProv, Long idTipo){
+        em = getEntityManager();
+        String queryString = "SELECT cp FROM CentroPoblado cp "
+                + "WHERE cp.departamento.provincia.id = :idProv "
+                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.adminentidad.habilitado = true";
+        Query q = em.createQuery(queryString)
+                .setParameter("idProv", idProv)
+                .setParameter("idTipo", idTipo);
+        return q.getResultList();     
+    }
+    
+    public List<CentroPoblado> getCentrosXRegionTipo(Long idRegion, Long idTipo){
+        em = getEntityManager();
+        String queryString = "SELECT cp FROM CentroPoblado cp "
+                + "INNER JOIN cp.departamento depto "
+                + "INNER JOIN depto.provincia prov "
+                + "INNER JOIN prov.regiones reg "
+                + "WHERE reg.id = :idRegion "
+                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.adminentidad.habilitado = true ";    
+        Query q = em.createQuery(queryString)
+                .setParameter("idRegion", idRegion)
+                .setParameter("idTipo", idTipo);
+        return q.getResultList(); 
+    }
 }

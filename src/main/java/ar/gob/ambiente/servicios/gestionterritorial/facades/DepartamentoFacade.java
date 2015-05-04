@@ -160,4 +160,13 @@ public class DepartamentoFacade extends AbstractFacade<Departamento> {
         return result;
     }      
     
+    public List<Departamento> getDeptosXIdProv(Long idProv){
+        em = getEntityManager();     
+        String queryString = "SELECT dpto FROM Departamento dpto "
+                + "WHERE dpto.provincia.id = :idProv "
+                + "AND dpto.adminentidad.habilitado = true";
+        Query q = em.createQuery(queryString)
+                .setParameter("idProv", idProv);  
+        return q.getResultList();
+    }
 }
