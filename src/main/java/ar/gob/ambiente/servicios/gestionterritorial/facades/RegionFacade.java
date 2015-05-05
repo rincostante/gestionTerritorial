@@ -14,7 +14,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -98,7 +97,6 @@ public class RegionFacade extends AbstractFacade<Region> {
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
-    
 
     /**
      * Método que devuelve todas los Actividades Planificadas deshabilitadas
@@ -111,27 +109,26 @@ public class RegionFacade extends AbstractFacade<Region> {
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }  
-
-           /**
-     * Método que devuelve todas las Regiones que contienen la cadena recibida como parámetro 
-     * dentro de alguno de sus campos string, en este caso el nombre.
-     * @param stringParam: cadena que buscará en todos los campos de tipo varchar de la tabla correspondiente
-     * @return: El conjunto de resultados provenientes de la búsqueda. 
-     */      
-    public List<Region> getXString(String stringParam){
-        em = getEntityManager();
-        List<Region> result;
-        
-        String queryString = "SELECT reg FROM Region reg "
-                + "WHERE reg.nombre LIKE :stringParam "
-                + "AND reg.adminentidad.habilitado =true";
-        
-        Query q = em.createQuery(queryString)
-                .setParameter("stringParam", "%" + stringParam + "%");  
-        
-        result = q.getResultList();
-        return result;
-    }
  
+    public List<Region> getRegionesXidProv(Long idProv){
+        em = getEntityManager();
+        String queryString = "SELECT reg FROM Region reg "
+                + "INNER JOIN reg.provincias prov "
+                + "WHERE prov.id = :idProv "
+                + "WHERE reg.adminentidad.habilitado = false";
+        Query q = em.createQuery(queryString)
+                .setParameter("idProv", idProv);
+        return q.getResultList();
+    }
+    
+    public List<Region> getRegionesXidEspecif(Long idEspecif){
+        em = getEntityManager();
+        String queryString = "SELECT reg FROM Region reg "
+                + "WHERE reg.especificidadderegion.id = :idEspecif "
+                + "WHERE reg.adminentidad.habilitado = false";
+        Query q = em.createQuery(queryString)
+                .setParameter("idEspecif", idEspecif);
+        return q.getResultList();
+    }
 }      
      

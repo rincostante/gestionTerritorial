@@ -100,4 +100,15 @@ public class MunicipioFacade extends AbstractFacade<Municipio> {
                 .setParameter("depto", depto);
         return q.getResultList().isEmpty();
     }  
+    
+    public List<Municipio> getMunicipioXIdProv(Long idProv){
+        em = getEntityManager();
+        String queryString = "SELECT mu FROM Municipio mu "
+                + "WHERE mu.provincia.id = :idProv "
+                + "AND mu.departamento = :depto "
+                + "AND mu.adminentidad.habilitado = true";
+        Query q = em.createQuery(queryString)
+                .setParameter("idProv", idProv);
+        return q.getResultList();
+    }
 }

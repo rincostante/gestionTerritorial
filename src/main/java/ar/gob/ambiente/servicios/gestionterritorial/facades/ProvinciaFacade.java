@@ -112,8 +112,15 @@ public class ProvinciaFacade extends AbstractFacade<Provincia> {
         return result;
     }    
 
-    public List<Provincia> getHabilitadas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Provincia> getProvXIdRegion(Long idRegion) {
+        em = getEntityManager(); 
+        String queryString = "SELECT pro FROM Provincia pro "
+                + "INNER JOIN pro.regiones reg "
+                + "WHERE reg.id = :idRegion "
+                + "AND pro.adminentidad.habilitado = true"; 
+        Query q = em.createQuery(queryString)
+                .setParameter("idRegion", idRegion);
+        return q.getResultList();
     }
     
 }
