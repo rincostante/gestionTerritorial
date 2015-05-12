@@ -115,7 +115,7 @@ public class RegionFacade extends AbstractFacade<Region> {
         String queryString = "SELECT reg FROM Region reg "
                 + "INNER JOIN reg.provincias prov "
                 + "WHERE prov.id = :idProv "
-                + "WHERE reg.adminentidad.habilitado = false";
+                + "AND reg.adminentidad.habilitado = true";
         Query q = em.createQuery(queryString)
                 .setParameter("idProv", idProv);
         return q.getResultList();
@@ -125,7 +125,7 @@ public class RegionFacade extends AbstractFacade<Region> {
         em = getEntityManager();
         String queryString = "SELECT reg FROM Region reg "
                 + "WHERE reg.especificidadderegion.id = :idEspecif "
-                + "WHERE reg.adminentidad.habilitado = false";
+                + "AND reg.adminentidad.habilitado = true";
         Query q = em.createQuery(queryString)
                 .setParameter("idEspecif", idEspecif);
         return q.getResultList();

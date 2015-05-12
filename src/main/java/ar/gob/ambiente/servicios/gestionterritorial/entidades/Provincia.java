@@ -20,15 +20,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Entidad que modela las Provincias
  * 
  * @author epassarelli
  */
+@XmlRootElement(name = "provincia")
 @Entity
+@Table(name = "provincia")
 public class Provincia implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -81,6 +86,7 @@ public class Provincia implements Serializable {
         this.nombre = nombre;
     }
 
+    @XmlTransient
     public List<Region> getRegiones() {
         return regiones;
     }
@@ -89,6 +95,7 @@ public class Provincia implements Serializable {
         this.regiones = regiones;
     }
 
+    @XmlTransient
     public List<Municipio> getMunicipios() {
         return municipios;
     }
@@ -97,6 +104,7 @@ public class Provincia implements Serializable {
         this.municipios = municipios;
     }
 
+    @XmlTransient
     public List<Departamento> getDepartamentos() {
         return departamentos;
     }
@@ -105,6 +113,7 @@ public class Provincia implements Serializable {
         this.departamentos = departamentos;
     }
 
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }

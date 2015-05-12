@@ -19,12 +19,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author epassarelli
  */
+@XmlRootElement(name = "departamento")
 @Entity
+@Table(name = "departamento")
 public class Departamento implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -77,6 +82,7 @@ public class Departamento implements Serializable {
         this.provincia = provincia;
     }
 
+    @XmlTransient
     public List<CentroPoblado> getCentrosPoblados() {
         return centrosPoblados;
     }
@@ -85,7 +91,7 @@ public class Departamento implements Serializable {
         this.centrosPoblados = centrosPoblados;
     }
     
-   
+    @XmlTransient
     public List<Municipio> getMunicipios() {
         return municipios;
     }
@@ -94,6 +100,7 @@ public class Departamento implements Serializable {
         this.municipios = municipios;
     }    
     
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }

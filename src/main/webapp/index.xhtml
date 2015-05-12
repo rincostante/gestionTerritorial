@@ -3,16 +3,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" >
+      xmlns:f="http://xmlns.jcp.org/jsf/core" 
+      xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/indexTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.Aplicacion}" />
         </ui:define>
         <ui:define name="content">
-           <f:metadata>  
-                <f:event listener="#{mbLogin.iniciar}" type="preRenderView"></f:event>  
-           </f:metadata>             
-
+            <f:metadata>  
+                 <f:event listener="#{mbLogin.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>             
+            <h:form>
+                <p:panel header="Detalle de los alcances del servicio" style="position: absolute; top:15%; left:50%; width:800px; margin-left:-400px;">
+                    <h:outputText value="El servicio de Gestión Territorial pone a disposición de las aplicaciones de la SAyDS 
+                                  la completa organización territorial de nuestro país, estructurada en Provincias, Departamentos 
+                                  y Localidades. Agrega además la organización política de cada Provincia mediante la publicación 
+                                  de la totalidad de los Municipios que integran cada una." /><br></br>
+                    <h:outputText value="Dada la multiplicidad de categorías para clasificar localidades, se ha elegido el nombre genérico 
+                                  'Centro Poblado'. Cada uno de los Centros Poblados almacenados en su base de datos contiene un profuso 
+                                  detalle de información, parte de la cual se lista a continuación:" /><br></br>
+                                        <h:outputText value="&ensp;&ensp;&ensp;&sect; Familia"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Tipo de Centro Poblado"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Departamento"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Municipio"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Provincia"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Región"/><br></br>
+                    <h:outputText value="&ensp;&ensp;&ensp;&sect; Especificidad de la Región"/><br></br>
+                    <h:outputText value="La presente aplicación constituye la interface de administración y mantenimiento de toda esta información."/><br></br>
+                </p:panel>
+            </h:form>
         </ui:define> 
     </ui:composition>
     

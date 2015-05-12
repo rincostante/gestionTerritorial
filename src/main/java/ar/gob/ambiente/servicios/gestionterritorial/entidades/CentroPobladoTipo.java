@@ -18,12 +18,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author epassarelli
  */
+@XmlRootElement(name = "centropobladotipo")
 @Entity
+@Table(name = "centropobladotipo")
 public class CentroPobladoTipo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,6 +48,7 @@ public class CentroPobladoTipo implements Serializable {
         centrosPoblados = new ArrayList();
     }
 
+    @XmlTransient
     public List<CentroPoblado> getCentrosPoblados() {
         return centrosPoblados;
     }
@@ -67,7 +73,7 @@ public class CentroPobladoTipo implements Serializable {
         this.nombre = nombre;
     }
 
-
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }

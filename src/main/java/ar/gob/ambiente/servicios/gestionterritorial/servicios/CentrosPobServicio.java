@@ -7,12 +7,16 @@
 package ar.gob.ambiente.servicios.gestionterritorial.servicios;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPoblado;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPobladoTipo;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Departamento;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.EspecificidadDeRegion;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Municipio;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Provincia;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Region;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.CentroPobladoFacade;
+import ar.gob.ambiente.servicios.gestionterritorial.facades.CentroPobladoTipoFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.DepartamentoFacade;
+import ar.gob.ambiente.servicios.gestionterritorial.facades.EspecificidadDeRegionFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.MunicipioFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.ProvinciaFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.RegionFacade;
@@ -47,6 +51,12 @@ public class CentrosPobServicio {
     
     @EJB
     private ProvinciaFacade provinciaFacade;
+    
+    @EJB
+    private CentroPobladoTipoFacade centroPobladoTipoFacade;
+    
+    @EJB
+    private EspecificidadDeRegionFacade espRegFacade;
     private static final Logger logger = Logger.getLogger(CentroPoblado.class.getName());
 
     public List<CentroPoblado> getCentrosPorDeptoYTipo(Long idDepto, Long idTipo) {
@@ -58,7 +68,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosXDeptoTipo() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosXDeptoTipo() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }        
         return lstCentros;
     }
@@ -72,7 +82,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosPorProvYTipo() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosPorProvYTipo() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstCentros;
     }
@@ -86,7 +96,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosPorRegionYTipo() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosPorRegionYTipo() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstCentros;
     }
@@ -100,7 +110,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getDeptosPorProvincia() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getDeptosPorProvincia() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstDeptos;
     }
@@ -114,7 +124,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getMunicipiosPorProvincia() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getMunicipiosPorProvincia() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstMunicipios;
     }
@@ -128,7 +138,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getRegionesPorProvincia() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getRegionesPorProvincia() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstRegiones;
     }
@@ -142,7 +152,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getRegionesPorEspecif() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getRegionesPorEspecif() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstRegiones;
     }
@@ -156,7 +166,7 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getProvinciasPorRegion() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getProvinciasPorRegion() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstProvincias;
     }    
@@ -170,8 +180,51 @@ public class CentrosPobServicio {
         }
         catch (Exception ex){
             date = new Date(System.currentTimeMillis());
-            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getProvincias() desde el servicio de Especies vegetales. " + date + ". ", ex);
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getProvincias() desde el servicio de Centros Poblados. " + date + ". ", ex);
         }      
         return lstProvincias;
     }
+    
+    public List<CentroPobladoTipo> getTiposCentros(){
+        List<CentroPobladoTipo> lstTipoCentro = new ArrayList();
+        Date date;
+        try{
+            lstTipoCentro = centroPobladoTipoFacade.getActivos();
+            logger.log(Level.INFO, "Ejecutando el método getTiposCentros() desde el servicio");
+        }
+        catch (Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getTiposCentros() desde el servicio de Centros Poblados. " + date + ". ", ex);
+        }      
+        return lstTipoCentro;
+    }    
+    
+    public List<EspecificidadDeRegion> getEspecifRegion(){
+        List<EspecificidadDeRegion> lstEpecificidades = new ArrayList();
+        Date date;
+        try{
+            lstEpecificidades = espRegFacade.getActivos();
+            logger.log(Level.INFO, "Ejecutando el método getEspecifRegion() desde el servicio");
+        }
+        catch (Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getEspecifRegion() desde el servicio de Centros Poblados. " + date + ". ", ex);
+        }      
+        return lstEpecificidades;
+    }     
+    
+    public CentroPoblado getCentroPoblado(Long id) {
+        CentroPoblado centro;
+        Date date;
+        try{
+            centro = centroPobladoFacade.find(id);
+            logger.log(Level.INFO, "Ejecutando el método getCentroPoblado() desde el servicio");
+            return centro;
+        }
+        catch (Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentroPoblado() desde el servicio de Centros Poblados. " + date + ". ", ex);
+            return null;
+        }
+    }    
 }

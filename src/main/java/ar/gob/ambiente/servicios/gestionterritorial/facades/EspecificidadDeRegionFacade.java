@@ -107,9 +107,4 @@ public class EspecificidadDeRegionFacade extends AbstractFacade<EspecificidadDeR
         result = q.getResultList();
         return result;
     }
-
-    public List<EspecificidadDeRegion> getHabilitados() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-        
 }        

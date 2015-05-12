@@ -18,12 +18,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author lagarcia
  */
+@XmlRootElement(name = "especificidadderegion")
 @Entity
+@Table(name = "especificidadderegion")
 public class EspecificidadDeRegion implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,11 +43,11 @@ public class EspecificidadDeRegion implements Serializable {
     @JoinColumn(name="adminentidad_id")
     private AdminEntidad adminentidad;
 
-    
-      
+    public EspecificidadDeRegion(){
+        regiones = new ArrayList();
   
-    
-    
+    }
+      
     public Long getId() {
         return id;
     }
@@ -59,6 +64,7 @@ public class EspecificidadDeRegion implements Serializable {
         this.nombre = nombre;
     }
 
+    @XmlTransient
     public List<Region> getRegiones() {
         return regiones;
     }
@@ -67,6 +73,7 @@ public class EspecificidadDeRegion implements Serializable {
         this.regiones = regiones;
     }
     
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }
@@ -74,14 +81,6 @@ public class EspecificidadDeRegion implements Serializable {
     public void setAdminentidad(AdminEntidad adminentidad) {
         this.adminentidad = adminentidad;
     }
-
-    
-    public EspecificidadDeRegion(){
-        regiones = new ArrayList();
-  
-    }
-
-
 
     @Override
     public int hashCode() {

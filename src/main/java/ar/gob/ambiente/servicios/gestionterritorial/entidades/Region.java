@@ -21,19 +21,23 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author epassarelli
  */
+@XmlRootElement(name = "region")
 @Entity
+@Table(name = "region")
 public class Region implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
         
     /**
@@ -78,7 +82,6 @@ public class Region implements Serializable {
     }
     /**
      *
-     * @param EspecificidadDeRegion
      */
     public void setEspecificidadderegion(EspecificidadDeRegion especificidadderegion) {
         this.especificidadderegion = especificidadderegion;
@@ -122,6 +125,7 @@ public class Region implements Serializable {
      *
      * @return
      */
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }

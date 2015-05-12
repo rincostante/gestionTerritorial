@@ -16,13 +16,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author epassarelli
  * Esta es una prueba de subir un archivo solito al GIT
  */
+@XmlRootElement(name = "centropoblado")
 @Entity
+@Table(name = "centropoblado")
 public class CentroPoblado implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -76,6 +81,7 @@ public class CentroPoblado implements Serializable {
         this.departamento = departamento;
     }
 
+    @XmlTransient
     public AdminEntidad getAdminentidad() {
         return adminentidad;
     }

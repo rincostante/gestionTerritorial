@@ -106,7 +106,7 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
         em = getEntityManager();
         String queryString = "SELECT cp FROM CentroPoblado cp "
                 + "WHERE cp.departamento.id = :idDepto "
-                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.centroPobladoTipo.id = :idTipo "
                 + "AND cp.adminentidad.habilitado = true";
         Query q = em.createQuery(queryString)
                 .setParameter("idDepto", idDepto)
@@ -118,7 +118,7 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
         em = getEntityManager();
         String queryString = "SELECT cp FROM CentroPoblado cp "
                 + "WHERE cp.departamento.provincia.id = :idProv "
-                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.centroPobladoTipo.id = :idTipo "
                 + "AND cp.adminentidad.habilitado = true";
         Query q = em.createQuery(queryString)
                 .setParameter("idProv", idProv)
@@ -133,7 +133,7 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
                 + "INNER JOIN depto.provincia prov "
                 + "INNER JOIN prov.regiones reg "
                 + "WHERE reg.id = :idRegion "
-                + "AND cd.centroPobladoTipo.id = :idTipo "
+                + "AND cp.centroPobladoTipo.id = :idTipo "
                 + "AND cp.adminentidad.habilitado = true ";    
         Query q = em.createQuery(queryString)
                 .setParameter("idRegion", idRegion)

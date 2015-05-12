@@ -6,9 +6,19 @@
 
 package ar.gob.ambiente.servicios.gestionterritorial.servlets;
 
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPoblado;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.CentroPobladoTipo;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.Departamento;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.EspecificidadDeRegion;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.Municipio;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.Provincia;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.Region;
+import ar.gob.ambiente.servicios.gestionterritorial.facades.CentroPobladoFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.EspecificidadDeRegionFacade;
+import ar.gob.ambiente.servicios.gestionterritorial.servicios.CentrosPobServicio;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 public class espRegServlet extends HttpServlet {
 
     @EJB
-    private EspecificidadDeRegionFacade espFcd;
+    private CentrosPobServicio centroPobServicio;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,41 +47,46 @@ public class espRegServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
+            /*
+            // Centros por parámetro
+            Long idRegion = Long.valueOf(6);
+            Long idProv = Long.valueOf(1);
+            Long idDepto = Long.valueOf(1);
+            Long idTipo = Long.valueOf(1);
+            
+            //List<CentroPoblado> centros = centroPobServicio.getCentrosPorDeptoYTipo(idDepto, idTipo);
+            //List<CentroPoblado> centros = centroPobServicio.getCentrosPorProvYTipo(idProv, idTipo);
+            List<CentroPoblado> centros = centroPobServicio.getCentrosPorRegionYTipo(idRegion, idTipo);
+            
+            System.out.println("El primer centro es: " + centros.get(0).getNombre());
             
             
-            /* TODO output your page here. You may use following sample code. */
+            //Por Provincia
+            Long idProvincia = Long.valueOf(1);
             
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet espRegServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet espRegServlet at " + request.getContextPath() + "</h1>");
+            //List<Departamento> provincias = centroPobServicio.getDeptosPorProvincia(idProvincia);
+            //List<Municipio> municipios = centroPobServicio.getMunicipiosPorProvincia(idProvincia);
+            List<Region> regiones = centroPobServicio.getRegionesPorProvincia(idProvincia);
             
-            //espFcd.existe("Pirulo");
+            System.out.println("El primer depto es: " + regiones.get(0).getNombre());
             
+            // Regiones por especificidad
+            Long idEspReg = Long.valueOf(4);
+            List<Region> regiones = centroPobServicio.getRegionesPorEspecif(idEspReg);
+            System.out.println("La primera región es: " + regiones.get(0).getNombre());
             
-            if(espFcd.existe("Pirulo")){
-                out.println("<h1>No Existe</h1>");
-                }
-                else{
-                    out.println("<h1>Ya existe</h1>");
-                        }
+            // todas las provincias
+            List<Provincia> provincias = centroPobServicio.getProvincias();
+            System.out.println("La primera provincia es: " + provincias.get(0).getNombre());
             
+            // todos los tipos de centros poblados
+            List<CentroPobladoTipo> tiposDeCentros = centroPobServicio.getTiposCentros();
+            System.out.println("El primer tipo de centro es: " + tiposDeCentros.get(0).getNombre());
+            */
             
-            if(espFcd.tieneDependencias(Long.valueOf(1))){
-                out.println("<h1>No Tiene Dependencias</h1>");
-                }
-                else{
-                    out.println("<h1>Tiene Dependencias</h1>");
-                        }
-            
-            
-            out.println("</body>");
-
-            out.println("</html>");
-            
+            // todas las especificidades de región
+            List<EspecificidadDeRegion> especificidades = centroPobServicio.getEspecifRegion();
+            System.out.println("La primera especificidad es: " + especificidades.get(0).getNombre());
         }
     }
 

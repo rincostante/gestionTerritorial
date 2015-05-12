@@ -105,7 +105,6 @@ public class MunicipioFacade extends AbstractFacade<Municipio> {
         em = getEntityManager();
         String queryString = "SELECT mu FROM Municipio mu "
                 + "WHERE mu.provincia.id = :idProv "
-                + "AND mu.departamento = :depto "
                 + "AND mu.adminentidad.habilitado = true";
         Query q = em.createQuery(queryString)
                 .setParameter("idProv", idProv);
