@@ -29,11 +29,9 @@
                     <p:column headerText="Municipio" sortBy="#{e.nombre}" filterBy="#{e.nombre}" >
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>                    
-                    <p:column headerText="Departamento" sortBy="#{e.departamento.nombre}" filterBy="#{e.departamento.nombre}" >
-                        <p:outputLabel value="#{e.departamento.nombre}"/>
-                    </p:column>                       
-                    <p:column headerText="Provincia" sortBy="#{e.departamento.provincia.nombre}" filterBy="#{e.departamento.provincia.nombre}" >
-                        <p:outputLabel value="#{e.departamento.provincia.nombre}"/>
+                    
+                    <p:column headerText="Provincia" sortBy="#{e.provincia.nombre}" filterBy="#{e.provincia.nombre}" >
+                        <p:outputLabel value="#{e.provincia.nombre}"/>
                     </p:column>                
                     <p:column filterBy="#{e.adminentidad.habilitado}" headerText="Estado" filterMatchMode="equals">
                         <f:facet name="filter">

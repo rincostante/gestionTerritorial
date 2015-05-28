@@ -8,6 +8,7 @@ package ar.gob.ambiente.servicios.gestionterritorial.facades;
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Departamento;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Municipio;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.Provincia;
 
 import java.util.List;
 import javax.ejb.Stateless;
@@ -87,17 +88,17 @@ public class MunicipioFacade extends AbstractFacade<Municipio> {
     /**
      * Metodo que verifica si ya existe la entidad.
      * @param nombre
-     * @param depto
+     * @param prov
      * @return: devuelve True o False
      */
-    public boolean noExiste(String nombre, Departamento depto){
+    public boolean noExiste(String nombre, Provincia prov){
         em = getEntityManager();
         String queryString = "SELECT mu FROM Municipio mu "
                 + "WHERE mu.nombre = :stringParam "
-                + "AND mu.departamento = :depto";
+                + "AND mu.provincia = :prov";
         Query q = em.createQuery(queryString)
                 .setParameter("stringParam", nombre)
-                .setParameter("depto", depto);
+                .setParameter("prov", prov);
         return q.getResultList().isEmpty();
     }  
     

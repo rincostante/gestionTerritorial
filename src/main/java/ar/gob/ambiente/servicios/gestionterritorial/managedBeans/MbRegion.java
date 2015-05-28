@@ -457,7 +457,7 @@ public class MbRegion implements Serializable{
     
     
     /**
-     * Método para mostrar las Actividades Implementadas vinculadas a esta Actividad Planificada
+     * 
      */
     public void verProvincias(){
         provincias = current.getProvincias();

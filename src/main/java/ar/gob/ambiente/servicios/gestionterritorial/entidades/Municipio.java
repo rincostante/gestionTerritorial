@@ -63,6 +63,7 @@ public class Municipio implements Serializable {
         this.nombre = nombre;
     }
 
+    @XmlTransient
     public Departamento getDepartamento() {
         return departamento;
     }

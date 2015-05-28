@@ -220,7 +220,7 @@ public class MbMunicipio implements Serializable {
         admEnt.setUsAlta(usLogeado);
         current.setAdminentidad(admEnt);         
         try {
-            if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+            if(getFacade().noExiste(current.getNombre(), current.getProvincia())){
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioCreated"));
                 return "view";
@@ -272,7 +272,7 @@ public class MbMunicipio implements Serializable {
         // acualizo
         try {
             if(update == 0){
-                if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                if(getFacade().noExiste(current.getNombre(), current.getProvincia())){
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MunicipioUpdated"));
                     return "view";

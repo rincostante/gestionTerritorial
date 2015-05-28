@@ -55,6 +55,11 @@ public class CentrosPobladosWebService {
     public List<Municipio> getMunicipiosPorProvincia(@WebParam(name = "idProv") Long idProv) {
         return ejbRef.getMunicipiosPorProvincia(idProv);
     }
+    
+    @WebMethod(operationName = "buscarMunicipiosPorId")
+    public Municipio getMunicipiosPorId(@WebParam(name = "idMuni") Long idMuni) {
+        return ejbRef.getMunicipioPorId(idMuni);
+    }
 
     @WebMethod(operationName = "buscarRegionesPorProvincia")
     public List<Region> getRegionesPorProvincia(@WebParam(name = "idProv") Long idProv) {

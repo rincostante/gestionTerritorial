@@ -129,6 +129,20 @@ public class CentrosPobServicio {
         return lstMunicipios;
     }
     
+    public Municipio getMunicipioPorId(Long idMunicipio){
+        Municipio result;
+        Date date;
+        try{
+            result = municipioFacade.find(idMunicipio);
+            logger.log(Level.INFO, "Ejecutando el método getMunicipioPorId() desde el servicio");
+            return result;
+        }catch(Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getMunicipioPorId() desde el servicio de Centros Poblados. " + date + ". ", ex);
+            return null;
+        }
+    }
+    
     public List<Region> getRegionesPorProvincia(Long idProv){
         List<Region> lstRegiones = new ArrayList();
         Date date;
