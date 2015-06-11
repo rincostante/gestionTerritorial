@@ -63,6 +63,26 @@ public class MbEspRegion implements Serializable{
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
     } 
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }      
    
     /********************************
      ** Getters y Setters ***********
@@ -105,26 +125,7 @@ public class MbEspRegion implements Serializable{
         }
         return items;
     }
-    
-    /**
-     * Método que borra de la memoria los MB innecesarios al cargar el listado 
-     */
-    public void iniciar(){
-        if(!iniciado){
-            String s;
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-            .getExternalContext().getSession(true);
-            Enumeration enume = session.getAttributeNames();
-            while(enume.hasMoreElements()){
-                s = (String)enume.nextElement();
-                if(s.substring(0, 2).equals("mb")){
-                    if(!s.equals("mbUsuario") && !s.equals("mbLogin")){
-                        session.removeAttribute(s);
-                    }
-                }
-            }
-        }
-    }     
+      
   
     /*******************************
      ** Métodos de inicialización **

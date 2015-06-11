@@ -148,7 +148,7 @@ public class MbMunicipio implements Serializable {
             while(enume.hasMoreElements()){
                 s = (String)enume.nextElement();
                 if(s.substring(0, 2).equals("mb")){
-                    if(!s.equals("mbMunicipio") && !s.equals("mbLogin")){
+                    if(!s.equals("mbLogin")){
                         session.removeAttribute(s);
                     }
                 }

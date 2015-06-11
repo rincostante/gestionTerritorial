@@ -8,6 +8,7 @@ package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 
 
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
+import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.CriptPass;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.UsuarioFacade;
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,10 +16,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import org.omnifaces.util.Faces;
 
 /**
  *
@@ -67,20 +71,33 @@ public class MbLogin implements Serializable{
             while(enume.hasMoreElements()){
                 s = (String)enume.nextElement();
                 if(s.substring(0, 2).equals("mb")){
-                    if(!s.equals("mbUsuario") && !s.equals("mbLogin")){
+                    if(!s.equals("mbLogin")){
                         session.removeAttribute(s);
                     }
                 }
             }
         }else{
-            if(usuarioFacade.getUsuario(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser()) != null){
-                usLogeado = usuarioFacade.getUsuario(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
-                ambito = usLogeado.getRol().getNombre();
-                iniciado = true;
-            }else{
-                FacesContext fc=FacesContext.getCurrentInstance();
-                fc.getExternalContext().redirect(ResourceBundle.getBundle("/Bundle").getString("logError"));
-            }
+            // obtengo el nombre del usuario logeado de la cookie correspondiente
+            String nomUsuario;
+            String valueEnc = Faces.getRequestCookie(ResourceBundle.getBundle("/Bundle").getString("nameCookieUser"));
+            
+            try {
+                // desencripto el nombre
+                nomUsuario = CriptPass.desencriptar(valueEnc);
+                
+                // obtebtengo el usuario correspondiente al nombre desencriptado
+                if(usuarioFacade.getUsuario(nomUsuario) != null){
+                    usLogeado = usuarioFacade.getUsuario(nomUsuario);
+                    ambito = usLogeado.getRol().getNombre();
+                    iniciado = true;
+                }else{
+                    // si no tengo un usuario registrado en la aplicación para este nombre, redirecciono a la vista de error de acceso
+                    FacesContext fc=FacesContext.getCurrentInstance();
+                    fc.getExternalContext().redirect(ResourceBundle.getBundle("/Bundle").getString("logError"));
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(MbLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }    
         }
     }      
     public List<String> getListMbActivos() {

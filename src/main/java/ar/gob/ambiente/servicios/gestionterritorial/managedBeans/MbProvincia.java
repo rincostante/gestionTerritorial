@@ -78,7 +78,7 @@ public class MbProvincia implements Serializable{
             while(enume.hasMoreElements()){
                 s = (String)enume.nextElement();
                 if(s.substring(0, 2).equals("mb")){
-                    if(!s.equals("mbUsuario") && !s.equals("mbLogin")){
+                    if(!s.equals("mbLogin")){
                         session.removeAttribute(s);
                     }
                 }

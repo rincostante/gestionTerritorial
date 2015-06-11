@@ -11,12 +11,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ResourceBundle;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginFilter implements Filter {
     
     private static final boolean debug = true;
+    private static final String nameCookieUser = ResourceBundle.getBundle("/Bundle").getString("nameCookieUser");
+    private static final String nameCookieUrl = ResourceBundle.getBundle("/Bundle").getString("nameCookieUrl");  
 
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
@@ -104,30 +108,53 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-            HttpServletRequest req = (HttpServletRequest) request;
-            HttpServletResponse res = (HttpServletResponse) response;
-             // Obtengo el bean que representa el usuario desde el scope sesión
-            MbLogin mbLogin = (MbLogin) req.getSession().getAttribute("mbLogin");
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
-            //Proceso la URL que está requiriendo el cliente
-            String urlStr = req.getRequestURL().toString().toLowerCase();
-            boolean noProteger = noProteger(urlStr);
-            System.out.println(urlStr + " - desprotegido=[" + noProteger + "]");
+        //Proceso la URL que está requiriendo el cliente
+        String urlStr = req.getRequestURL().toString().toLowerCase();
+        boolean noProteger = noProteger(urlStr);
+        System.out.println(urlStr + " - desprotegido=[" + noProteger + "]");
 
-            //Si no requiere protección continúo normalmente.
-            if (noProteger(urlStr)) {
-              chain.doFilter(request, response);
-              return;
+        //Si no requiere protección continúo normalmente.
+        if (noProteger(urlStr)) {
+          chain.doFilter(request, response);
+          return;
+        }
+
+        //Si no salió busco la cookie de usuario para saber si está autenticado,
+        //y busco la cookie de la url, si existe la elimino
+        String usAutenticado = "";
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(nameCookieUser)){
+                     usAutenticado = cookie.getValue();
+                }
+                if(cookie.getName().equals(nameCookieUrl)){
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    res.addCookie(cookie);
+                }
             }
+        }
+        
+        // si el usuario no está autenticado, procedo
+        if(usAutenticado.equals("")){
+            // guardo la url en la cookie correspondiente para volver en caso de autenticar el usuario
+            Cookie cookieUrl = new Cookie(nameCookieUrl, req.getContextPath());
+            cookieUrl.setMaxAge(60);
+            cookieUrl.setPath("/");
+            res.addCookie(cookieUrl);
+            
+            // redirecciona para la autenticación del usuario
+            res.sendRedirect(ResourceBundle.getBundle("/Bundle").getString("RutaAutenticacion") + "/faces/login.xhtml");
+            return; 
+        }        
 
-            //El usuario no está logueado
-            if (mbLogin == null || !mbLogin.isLogeado()) {
-              res.sendRedirect(req.getContextPath() + "/faces/login.xhtml");
-              return;
-            }
-
-            //El recurso requiere protección, pero el usuario ya está logueado.
-            chain.doFilter(request, response);  
+        //El recurso requiere protección, pero el usuario ya está logueado.
+        chain.doFilter(request, response);  
         /*
         if (debug) {
             log("LoginFilter:doFilter()");
