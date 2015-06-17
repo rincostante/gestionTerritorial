@@ -58,8 +58,8 @@
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.current}" />
                         </p:commandButton>
                         
-                        <p:commandButton icon="ui-icon-pencil"  action="#{mbUsuario.prepareEdit}">
-                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.current}" />
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbUsuario.prepareEdit}" title="Editar" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.current}" /> 
                         </p:commandButton>
                         
                         <p:commandButton icon="ui-icon-close" action="#{mbUsuario.prepareDesHabilitar}" rendered="#{e.admin.habilitado == true}" title="Deshabilitar" update="usList">

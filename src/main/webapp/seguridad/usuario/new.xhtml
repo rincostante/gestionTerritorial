@@ -11,13 +11,21 @@
                 <p:panel id="pnNew" header="#{bundle.UsuarioNewTitle}" style="margin-bottom:10px;">
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">   
+                        
+                        <p:outputLabel value="#{bundle.UusarioLabelUsDisp}" for="usDispList"/>      
+                        <p:selectOneMenu id="usDispList" value="#{mbUsuario.usSeleccionado}" 
+                                         requiredMessage="#{bundle.CreateUsuarioUsDispRequiredMessage}" 
+                                         required="true">
+                            <f:selectItem itemLabel="Seleccione el Usuario vinculado" itemValue="" noSelectionOption="true"/>
+                            <f:selectItems value="#{mbUsuario.lstUsDisponibles}" var="usDisp" itemLabel="#{usDisp}" itemValue="#{usDisp}"/>
+                        </p:selectOneMenu> 
+                        
                         <p:outputLabel value="#{bundle.UsuarioLabelRol}" for="rolList"/>      
                         <p:selectOneMenu id="rolList" value="#{mbUsuario.selected.rol}"  requiredMessage="#{bundle.CreateUsuarioRolRequiredMessage}" required="true">
                             <f:selectItem itemLabel="Seleccione el Rol" itemValue="" noSelectionOption="true"/>
                             <f:selectItems value="#{mbUsuario.listaRol}"  var="rol" itemLabel="#{rol.nombre}" itemValue="#{rol}"/>
                         </p:selectOneMenu>  
-                        <p:outputLabel value="#{bundle.UsuarioLabelNombre}" for="nombre"/>
-                        <p:inputText id="nombre" validator="#{mbUsuario.validarInsert}"  value="#{mbUsuario.selected.nombre}"/>      
+  
                     </h:panelGrid>
                 </p:panel> 
                 <p:toolbar>

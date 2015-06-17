@@ -11,38 +11,20 @@
             <p:panel id="pnView" header="#{bundle.UsuarioViewTitle}" style="margin-bottom:10px;">
                 <p:messages id="messages" />
                     <h:panelGrid columns="2">
-                        <h:outputLabel  value="#{bundle.UsuarioLabelNombre}"/>
-                        <h:outputText   value="#{mbUsuario.selected.nombre}" 
-                                        title="#{bundle.UsuarioLabelNombre}"/>     
-                        
-                        <h:outputLabel  value="#{bundle.UsuarioLabelRol}"/>
-                        <h:outputText   value="#{mbUsuario.selected.rol.nombre}" 
-                                        title="#{bundle.CreateRolTitle_nombre}"/>
-                        
-                        
-                        <h:outputLabel  value="#{bundle.UsuarioLabelFechaAlta}"/>
-                        <h:outputText   value="#{mbUsuario.selected.admin.strFechaAlta}" 
-                                        title="#{bundle.UsuarioLabelFechaAlta}"/>   
-                        
-                        <h:outputLabel  value="#{bundle.UsuarioLabelUsAlta}"/>
-                        <h:outputText   value="#{mbUsuario.selected.admin.usAlta.nombre}" 
-                                        title="#{bundle.UsuarioLabelUsAlta}"/> 
-                        
-                        <h:outputLabel  value="#{bundle.UsuarioModifica}"/>
-                        <h:outputText   value="#{mbRol.selected.adminentidad.usModif}" 
-                                        title="#{bundle.UsuarioModifica}"/>                        
+                        <h:outputLabel value="#{bundle.UsuarioLabelNombre} "/>
+                        <h:outputText value="#{mbUsuario.selected.nombre}" title="#{bundle.UsuarioLabelNombre}"/>     
 
-                        <h:outputLabel  value="#{bundle.FechaModifica}"/>
-                        <h:outputText   value="#{mbRol.selected.adminentidad.strFechaModif}" 
-                                        title="#{bundle.FechaModifica}"/>                          
+                        <h:outputLabel value="#{bundle.UsuarioLabelNombreCompleto} "/>
+                        <h:outputText value="#{mbUsuario.selected.nombreCompleto}" title="#{bundle.UsuarioLabelNombreCompleto}"/>     
 
-                        <h:outputLabel  value="#{bundle.UsuarioBaja}" rendered="#{not mbRol.selected.adminentidad.habilitado}"/>
-                        <h:outputText   value="#{mbRol.selected.adminentidad.usBaja}" rendered="#{not mbRol.selected.adminentidad.habilitado}" 
-                                        title="#{bundle.UsuarioBaja}"/>                        
+                        <h:outputLabel value="#{bundle.UsuarioLabelRol} "/>
+                        <h:outputText value="#{mbUsuario.selected.rol.nombre}" title="#{bundle.CreateRolTitle_nombre}"/>
 
-                        <h:outputLabel  value="#{bundle.FechaBaja}" rendered="#{not mbRol.selected.adminentidad.habilitado}"/>
-                        <h:outputText   value="#{mbRol.selected.adminentidad.strFechaBaja}" rendered="#{not mbRol.selected.adminentidad.habilitado}"
-                                        title="#{bundle.FechaBaja}"/>        
+                        <h:outputLabel value="#{bundle.UsuarioLabelFechaAlta} "/>
+                        <h:outputText value="#{mbUsuario.selected.admin.strFechaAlta}" title="#{bundle.UsuarioLabelFechaAlta}"/>   
+
+                        <h:outputLabel value="#{bundle.UsuarioLabelUsAlta} "/>
+                        <h:outputText value="#{mbUsuario.selected.admin.usAlta.nombreCompleto}" title="#{bundle.UsuarioLabelUsAlta}"/>      
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

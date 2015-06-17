@@ -9,7 +9,6 @@ package ar.gob.ambiente.servicios.gestionterritorial.managedBeans;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.AdminEntidad;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Rol;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.Usuario;
-import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.CriptPass;
 import ar.gob.ambiente.servicios.gestionterritorial.entidades.util.JsfUtil;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.RolFacade;
 import ar.gob.ambiente.servicios.gestionterritorial.facades.UsuarioFacade;
@@ -20,20 +19,29 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.WebServiceRef;
+import ar.gob.ambiente.servicios.gestionterritorial.wsExt.AccesoAppWebService_Service;
+import ar.gob.ambiente.servicios.gestionterritorial.wsExt.AccesoAppWebService;
+import ar.gob.ambiente.servicios.gestionterritorial.wsExt.Aplicacion;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+//import ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario;
 
 /**
  *
  * @author rincostante
  */
 public class MbUsuario implements Serializable{
+    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/localhost_8080/AccesoAppWebService/AccesoAppWebService.wsdl")
+    private AccesoAppWebService_Service service;
     
     private Usuario current;
     private List<Usuario> listado;
@@ -48,7 +56,12 @@ public class MbUsuario implements Serializable{
     @EJB
     private UsuarioFacade usuarioFacade;       
     private List<Rol> listaRol; 
-
+    
+    private List<Aplicacion> lstApp;
+    private Long idApp;
+    private List<String> lstUsDisponibles; //Lista de pares usNombre - usNombreCompleto disponibles para poblar el combo
+    private String usSeleccionado; //String con los datos del usuario usNombre - usNombreCompleto    
+    private static final Logger logger = Logger.getLogger(Usuario.class.getName());
     
     /**
      * Creates a new instance of MbUsuario
@@ -61,11 +74,13 @@ public class MbUsuario implements Serializable{
      */
     @PostConstruct
     public void init(){
+        lstUsDisponibles = new ArrayList();
         update = 0;
         iniciado = false;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();    
+        lstApp = verAplicaciones();
     }
     
     /**
@@ -80,7 +95,7 @@ public class MbUsuario implements Serializable{
             while(enume.hasMoreElements()){
                 s = (String)enume.nextElement();
                 if(s.substring(0, 2).equals("mb")){
-                    if(!s.equals("mbUsuario")){
+                    if(!s.equals("mbLogin")){
                         session.removeAttribute(s);
                     }
                 }
@@ -91,6 +106,24 @@ public class MbUsuario implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/
+    
+    public List<String> getLstUsDisponibles() {
+        return lstUsDisponibles;
+    }
+
+    public void setLstUsDisponibles(List<String> lstUsDisponibles) {
+        this.lstUsDisponibles = lstUsDisponibles;
+    }
+
+    public String getUsSeleccionado() {
+        return usSeleccionado;
+    }
+
+    public void setUsSeleccionado(String usSeleccionado) {
+        this.usSeleccionado = usSeleccionado;
+    }
+
+    
     public Usuario getCurrent() {
         return current;
     }
@@ -159,21 +192,68 @@ public class MbUsuario implements Serializable{
     }    
     
     /**
-     * @return acción para el formulario de nuevo
-     */
-    public String prepareCreate() {
-        listaRol = rolFacade.getActivos();
-        current = new Usuario();
-        return "new";
-    }    
-    
-    /**
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
+        // cargo los roles
         listaRol = rolFacade.getActivos();
-        return "edit";
-    }    
+        update = 0;
+        return "edit";        
+    }     
+    
+    /**
+     * @return acción para el formulario de nuevo
+     */
+    public String prepareCreate() {
+        
+        // inicializo variables
+        idApp = Long.valueOf(0);      
+        boolean usIngresa;
+        String us;
+        
+        // obetengo la app        
+        Iterator itApp = lstApp.listIterator();
+        while(itApp.hasNext()){
+            Aplicacion app = (Aplicacion)itApp.next();
+            if(app.getUrl().equals(ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion"))){
+                idApp = app.getId();
+            }
+        }
+        
+        // obtengo los usuarios existentes
+        List<Usuario> lstUsExist = usuarioFacade.findAll();    
+        
+        // obtengo los usuarios disponibles para la app, solo si obtuve el idApp
+        if(idApp > 0){
+            List<ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario> lstUsDisp = verUsuariosPorIdApp();
+            Iterator itUsDisp = lstUsDisp.listIterator();
+            while(itUsDisp.hasNext()){
+                ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario usDisp = (ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario)itUsDisp.next();
+                Iterator itUsExist = lstUsExist.listIterator();
+                usIngresa = true;
+                while(itUsExist.hasNext()){
+                    Usuario usExist = (Usuario)itUsExist.next();
+                    if(usExist.getNombre().equals(usDisp.getNombre())){
+                        usIngresa = false;
+                    }
+                }
+                if(usIngresa){
+                    // agrego el usuario a la lista 
+                    us = usDisp.getNombre() + "-" + usDisp.getNombreCompleto();
+                    lstUsDisponibles.add(us);
+                }
+            }
+        }        
+        
+        // cargo los roles
+        listaRol = rolFacade.getActivos();
+        
+        // creo la entidad
+        current = new Usuario();
+        
+        // redirecciono al formulario
+        return "new";
+    }     
     
     /**
      *
@@ -200,32 +280,6 @@ public class MbUsuario implements Serializable{
         update();        
     }    
     
-    /**
-     * Métodos para las validaciones
-     */
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
 
     /*************************
     ** Métodos de operación **
@@ -236,8 +290,7 @@ public class MbUsuario implements Serializable{
      * @return mensaje que notifica la inserción
      */
     public String create() {
-        String clave = "";
-        String claveEncriptada = "";
+
         try {
             // Creación de la entidad de administración y asignación
             Date date = new Date(System.currentTimeMillis());
@@ -247,30 +300,12 @@ public class MbUsuario implements Serializable{
             admEnt.setUsAlta(usLogeado);
             current.setAdmin(admEnt);
 
-            // Generación de clave
-            clave = CriptPass.generar();
-
-            // la enccripto
-            claveEncriptada = CriptPass.encriptar(clave);
-
-            // verifico que no esté siendo usada por otro usuario
-            while(!usuarioFacade.verificarContrasenia(claveEncriptada)){
-                clave = CriptPass.generar();
-                claveEncriptada = CriptPass.encriptar(clave);
-            }
-
-            // la asigno
-            current.setCalve(claveEncriptada);
+            // asigno los datos del usuario seleccionado para persistirlo
+            current.setNombre(usSeleccionado.substring(0, usSeleccionado.indexOf("-")));
+            current.setNombreCompleto(usSeleccionado.substring(usSeleccionado.indexOf("-") + 1, usSeleccionado.length()));
 
             // Inserción
-            getFacade().create(current);
-
-            /********************************************************************************
-             * Aquí debería enviar el correo al usuario notificando el suceso, **************
-             * remitiendo la nueva contraseña y el procedimiento de incicio por primera vez *
-             ********************************************************************************/
-
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + " La clave asignada es: " + clave);
+            getFacade().create(current);            
             recreateModel();
             return "view";
 
@@ -293,25 +328,32 @@ public class MbUsuario implements Serializable{
                 current.getAdmin().setFechaBaja(date);
                 current.getAdmin().setUsBaja(usLogeado);
                 current.getAdmin().setHabilitado(false);
-            }
-            if(update == 2){
+            }if(update == 2){
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
                 current.getAdmin().setHabilitado(true);
                 current.getAdmin().setFechaBaja(null);
                 current.getAdmin().setUsBaja(usLogeado);
-            }
-            if(update == 0){
+            }if(update == 0){
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
             }
 
             // Actualizo
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioUpdated"));
-            recreateModel();
-            return "view";
-                
+            if(update == 0){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioUpdated"));
+                return "view";
+            }else if(update == 1){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioDeshabilitado"));
+                return "view";
+            }else{
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioHabilitado"));
+                return "view";
+            }            
+            
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("UsuarioUpdatedErrorOccured"));
             return null;
@@ -343,15 +385,39 @@ public class MbUsuario implements Serializable{
     private void recreateModel() {
         listado.clear();
         listado = null;
+        lstUsDisponibles.clear();
+        usSeleccionado = "";        
     }      
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateTipoCapNombreExistente")));
+
+    private List<Aplicacion> verAplicaciones() {  
+        List<Aplicacion> result;
+        try {
+            AccesoAppWebService port = service.getAccesoAppWebServicePort();
+            result = port.verAplicaciones();
+        } catch (Exception ex) {
+            result = null;
+            // muestro un mensaje al usuario
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioAppErrorWs"));
+            // lo escribo en el log del server
+            logger.log(Level.SEVERE, "{0} - {1}", new Object[]{ResourceBundle.getBundle("/Bundle").getString("UsuarioAppErrorWs"), ex.getMessage()});
         }
+        return result;
     }
     
-    
+    private List<ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario> verUsuariosPorIdApp(){
+        List<ar.gob.ambiente.servicios.gestionterritorial.wsExt.Usuario> result;
+        try{
+            AccesoAppWebService port = service.getAccesoAppWebServicePort();
+            result = port.verUsuariosPorApp(idApp);
+        } catch(Exception ex){
+            result = null;
+            // muestro un mensaje al usuario
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioUsErrorWs"));
+            // lo escribo en el log del server
+            logger.log(Level.SEVERE, "{0} - {1}", new Object[]{ResourceBundle.getBundle("/Bundle").getString("UsuarioUsErrorWs"), ex.getMessage()});
+        }
+        return result;
+    }
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
