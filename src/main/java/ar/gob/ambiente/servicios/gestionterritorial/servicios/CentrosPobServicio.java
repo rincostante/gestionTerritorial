@@ -58,6 +58,20 @@ public class CentrosPobServicio {
     @EJB
     private EspecificidadDeRegionFacade espRegFacade;
     private static final Logger logger = Logger.getLogger(CentroPoblado.class.getName());
+    
+    public List<CentroPoblado> getCentrosPorDepto(Long idDepto) {
+        List<CentroPoblado> lstCentros = new ArrayList();
+        Date date;
+        try{
+            lstCentros = centroPobladoFacade.getCentrosXDepto(idDepto);
+            logger.log(Level.INFO, "Ejecutando el método getCentrosXDepto() desde el servicio");
+        }
+        catch (Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentrosXDepto() desde el servicio de Centros Poblados. " + date + ". ", ex);
+        }        
+        return lstCentros;
+    }
 
     public List<CentroPoblado> getCentrosPorDeptoYTipo(Long idDepto, Long idTipo) {
         List<CentroPoblado> lstCentros = new ArrayList();

@@ -30,6 +30,11 @@ import javax.jws.WebParam;
 public class CentrosPobladosWebService {
     @EJB
     private CentrosPobServicio ejbRef;
+    
+    @WebMethod(operationName = "buscarCentrosPorDepto")
+    public List<CentroPoblado> getCentrosPorDepto(@WebParam(name = "idDepto") Long idDepto) {
+        return ejbRef.getCentrosPorDepto(idDepto);
+    }
 
     @WebMethod(operationName = "buscarCentrosPorDeptoYTipo")
     public List<CentroPoblado> getCentrosPorDeptoYTipo(@WebParam(name = "idDepto") Long idDepto, @WebParam(name = "idTipo") Long idTipo) {

@@ -100,7 +100,17 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
         }else{
             return null;
         }
-    }       
+    }    
+    
+    public List<CentroPoblado> getCentrosXDepto(Long idDepto){
+        em = getEntityManager();
+        String queryString = "SELECT cp FROM CentroPoblado cp "
+                + "WHERE cp.departamento.id = :idDepto "
+                + "AND cp.adminentidad.habilitado = true";
+        Query q = em.createQuery(queryString)
+                .setParameter("idDepto", idDepto);
+        return q.getResultList();         
+    }    
     
     public List<CentroPoblado> getCentrosXDeptoTipo(Long idDepto, Long idTipo){
         em = getEntityManager();
