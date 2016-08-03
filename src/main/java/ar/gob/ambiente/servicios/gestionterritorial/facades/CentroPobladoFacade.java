@@ -102,6 +102,29 @@ public class CentroPobladoFacade extends AbstractFacade<CentroPoblado> {
         }
     }    
     
+    /**
+     * Método creado pera las migraciones
+     * @param nomCentro
+     * @param nomDepto
+     * @return 
+     */
+    public CentroPoblado getByNomCentroYNomDepto(String nomCentro, String nomDepto){
+        List<CentroPoblado> lCp;
+        em = getEntityManager();
+        String queryString = "SELECT cp FROM CentroPoblado cp "
+                + "WHERE cp.nombre = :nomCentro "
+                + "AND cp.departamento.nombre = :nomDepto";
+        Query q = em.createQuery(queryString)
+                .setParameter("nomCentro", nomCentro)
+                .setParameter("nomDepto", nomDepto);
+        lCp = q.getResultList();
+        if(!lCp.isEmpty()){
+            return lCp.get(0);
+        }else{
+            return null;
+        }
+    }
+    
     public List<CentroPoblado> getCentrosXDepto(Long idDepto){
         em = getEntityManager();
         String queryString = "SELECT cp FROM CentroPoblado cp "

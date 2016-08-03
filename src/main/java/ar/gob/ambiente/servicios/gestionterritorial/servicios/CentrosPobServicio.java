@@ -255,4 +255,25 @@ public class CentrosPobServicio {
             return null;
         }
     }    
+    
+    /**
+     * Método para consumir en migraciones
+     * @param nombreCentro
+     * @param nombreDepto
+     * @return 
+     */
+    public CentroPoblado getCentroPobByNombreYNomDep(String nombreCentro, String nombreDepto){
+        CentroPoblado centro;
+        Date date;
+        try{
+            centro = centroPobladoFacade.getByNomCentroYNomDepto(nombreCentro, nombreDepto);
+            logger.log(Level.INFO, "Ejecutando el método getCentroPobByNombreYNomDep() desde el servicio");
+            return centro;
+        }
+        catch (Exception ex){
+            date = new Date(System.currentTimeMillis());
+            logger.log(Level.SEVERE, "Hubo un error al ejecutar el método getCentroPobByNombreYNomDep() desde el servicio de Centros Poblados. " + date + ". ", ex);
+            return null;
+        }
+    }
 }

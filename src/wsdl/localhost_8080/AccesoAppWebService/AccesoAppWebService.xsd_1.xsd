@@ -24,6 +24,7 @@
 <xs:element name="descripcion" type="xs:string" minOccurs="0"/>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
 <xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="rutaImagen" type="xs:string" minOccurs="0"/>
 <xs:element name="url" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

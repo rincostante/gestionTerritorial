@@ -138,7 +138,7 @@
                         </goals>
                         <configuration>
                             <wsdlFiles>
-                                <wsdlFile>vmdeswebjava.medioambiente.gov.ar_8080/AccesoAppWebService/AccesoAppWebService.wsdl</wsdlFile>
+                                <wsdlFile>localhost_8080/AccesoAppWebService/AccesoAppWebService.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>ar.gob.ambiente.servicios.gestionterritorial.wsExt</packageName>
                             <wsdlLocation>http://localhost:8080/AccesoAppWebService/AccesoAppWebService?WSDL</wsdlLocation>

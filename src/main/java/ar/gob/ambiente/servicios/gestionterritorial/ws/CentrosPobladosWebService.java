@@ -30,7 +30,7 @@ import javax.jws.WebParam;
 public class CentrosPobladosWebService {
     @EJB
     private CentrosPobServicio ejbRef;
-    
+
     @WebMethod(operationName = "buscarCentrosPorDepto")
     public List<CentroPoblado> getCentrosPorDepto(@WebParam(name = "idDepto") Long idDepto) {
         return ejbRef.getCentrosPorDepto(idDepto);
@@ -105,5 +105,16 @@ public class CentrosPobladosWebService {
     @WebMethod(operationName = "buscarCentroPoblado")
     public CentroPoblado getCentroPoblado(@WebParam(name = "id") Long id) {
         return ejbRef.getCentroPoblado(id);
+    }
+
+    /**
+     * Web service operation
+     * @param nomCentro
+     * @param nomDepto
+     * @return 
+     */
+    @WebMethod(operationName = "buscarCentrosPorNomCpNomDto")
+    public CentroPoblado buscarCentrosPorNomCpNomDto(@WebParam(name = "nomCentro") String nomCentro, @WebParam(name = "nomDepto") String nomDepto) {
+        return ejbRef.getCentroPobByNombreYNomDep(nomCentro, nomDepto);
     }
 }
