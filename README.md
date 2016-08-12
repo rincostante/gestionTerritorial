@@ -13,3 +13,4 @@ Se agregaron los facades de ls entidades, se agregaron métodos genéricos al Ab
 08/01/2015
 ==========
 Se eliminó la infraestructura de Arquillian para test por estar todavía inmadura y no manejar las transacciones de la misma forma que el contenedor externo. Se actualizó la versión de PrimeFaces.
+=======
