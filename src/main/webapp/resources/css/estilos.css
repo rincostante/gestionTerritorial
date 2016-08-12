@@ -4,37 +4,40 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
 /* 
-    Created on : 26-feb-2015, 15:28:00
-    Author     : epassarelli
+    Created on : 02-abr-2015, 22:01:29
+    Author     : Administrador
 */
+.ui-menubar{
+    background: #A80000 !important; 
+    height: 30px
+}
 
 .top .ui-layout-unit-content{
-   background: #EEE9D7;
+   background: #103B80;
 }
 
 .top{
-    background-color: #EEE9D7;
+    background-color: #103B80;
     border: none;
     border-radius: 0px;
 }
 
 .topPg{
     width: 100%;
-    height: 100px;
     border: none;
 }
 
 .topOl{
     border: none;
-    color: #424242;
+    color: #E6ECF9;
 }
 
 .botton .ui-layout-unit-content{
-   background: #424242;
+   background: #102554;
 }
 
 .botton{
-    background-color: #424242;
+    background-color: #102554;
     border: none;
     border-radius: 0px;
 }
